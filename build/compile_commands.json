@@ -1,0 +1,20 @@
+[
+{
+  "directory": "/Users/amrmac/Work/Study/University/image-processing/build",
+  "command": "/usr/bin/clang++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I/Users/amrmac/Work/Study/University/image-processing/build/image-processing_autogen/include -isystem /opt/homebrew/Cellar/opencv/4.10.0_12/include/opencv4 -isystem /opt/homebrew/lib/QtCore.framework/Headers -iframework /opt/homebrew/lib -isystem /opt/homebrew/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/include -isystem /opt/homebrew/lib/QtWidgets.framework/Headers -isystem /opt/homebrew/lib/QtGui.framework/Headers -g -std=gnu++17 -arch arm64 -o CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.o -c /Users/amrmac/Work/Study/University/image-processing/build/image-processing_autogen/mocs_compilation.cpp",
+  "file": "/Users/amrmac/Work/Study/University/image-processing/build/image-processing_autogen/mocs_compilation.cpp",
+  "output": "CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.o"
+},
+{
+  "directory": "/Users/amrmac/Work/Study/University/image-processing/build",
+  "command": "/usr/bin/clang++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I/Users/amrmac/Work/Study/University/image-processing/build/image-processing_autogen/include -isystem /opt/homebrew/Cellar/opencv/4.10.0_12/include/opencv4 -isystem /opt/homebrew/lib/QtCore.framework/Headers -iframework /opt/homebrew/lib -isystem /opt/homebrew/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/include -isystem /opt/homebrew/lib/QtWidgets.framework/Headers -isystem /opt/homebrew/lib/QtGui.framework/Headers -g -std=gnu++17 -arch arm64 -o CMakeFiles/image-processing.dir/main.cpp.o -c /Users/amrmac/Work/Study/University/image-processing/main.cpp",
+  "file": "/Users/amrmac/Work/Study/University/image-processing/main.cpp",
+  "output": "CMakeFiles/image-processing.dir/main.cpp.o"
+},
+{
+  "directory": "/Users/amrmac/Work/Study/University/image-processing/build",
+  "command": "/usr/bin/clang++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I/Users/amrmac/Work/Study/University/image-processing/build/image-processing_autogen/include -isystem /opt/homebrew/Cellar/opencv/4.10.0_12/include/opencv4 -isystem /opt/homebrew/lib/QtCore.framework/Headers -iframework /opt/homebrew/lib -isystem /opt/homebrew/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/include -isystem /opt/homebrew/lib/QtWidgets.framework/Headers -isystem /opt/homebrew/lib/QtGui.framework/Headers -g -std=gnu++17 -arch arm64 -o CMakeFiles/image-processing.dir/mainwindow.cpp.o -c /Users/amrmac/Work/Study/University/image-processing/mainwindow.cpp",
+  "file": "/Users/amrmac/Work/Study/University/image-processing/mainwindow.cpp",
+  "output": "CMakeFiles/image-processing.dir/mainwindow.cpp.o"
+}
+]

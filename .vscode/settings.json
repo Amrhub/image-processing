@@ -24,7 +24,10 @@
     "__config": "cpp",
     "__string": "cpp",
     "locale": "cpp",
-    "sstream": "cpp"
+    "sstream": "cpp",
+    "typeinfo": "cpp",
+    "complex": "cpp",
+    "cmath": "cpp"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

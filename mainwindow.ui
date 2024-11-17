@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>884</width>
+    <width>1197</width>
     <height>612</height>
    </rect>
   </property>
@@ -150,7 +150,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </size>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
-     <item alignment="">
+     <item>
       <widget class="QLabel" name="label">
        <property name="maximumSize">
         <size>
@@ -229,7 +229,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </size>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item alignment="">
+     <item>
       <widget class="QLabel" name="rotateLabel">
        <property name="maximumSize">
         <size>
@@ -713,7 +713,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <string/>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_6">
-     <item alignment="">
+     <item>
       <widget class="QLabel" name="skewImageLabel">
        <property name="maximumSize">
         <size>
@@ -726,7 +726,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
       </widget>
      </item>
-     <item alignment="">
+     <item>
       <widget class="QComboBox" name="flipCodeCombobox">
        <property name="placeholderText">
         <string>Flip code</string>
@@ -750,9 +750,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </item>
      <item>
       <widget class="QPushButton" name="flipImageBtn">
-        <property name="enabled">
-            <bool>false</bool>
-           </property>
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Submit</string>
        </property>
@@ -773,7 +773,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <string/>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_7">
-     <item alignment="">
+     <item>
       <widget class="QLabel" name="zoomImageLabel">
        <property name="maximumSize">
         <size>
@@ -971,9 +971,234 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </item>
      <item>
       <widget class="QPushButton" name="zoomImageBtn">
-        <property name="enabled">
-            <bool>false</bool>
-           </property>
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Submit</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QPushButton" name="histogramBtn">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>800</x>
+      <y>0</y>
+      <width>171</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Histogram Equalization</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="imageNegativeBtn">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>800</x>
+      <y>60</y>
+      <width>171</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Image Negative</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="logarithmicBtn">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>800</x>
+      <y>110</y>
+      <width>171</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Logarithmic Trans.</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="powerLawTransformationGroup">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>190</y>
+      <width>151</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>141</height>
+     </size>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_8">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Power Law</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="gammaInput">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+       </property>
+       <property name="placeholderText">
+        <string>Gamme value</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="powerTransformationBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Submit</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QPushButton" name="bitPlaneSlicingBtn">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>980</x>
+      <y>0</y>
+      <width>171</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Bit plane slicing</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="powerLawTransformationGroup_2">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>380</y>
+      <width>155</width>
+      <height>172</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>141</height>
+     </size>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_9">
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Gray Level slicing</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="grayLevelFromInput">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+       </property>
+       <property name="placeholderText">
+        <string>Range From</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="grayLevelToInput">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+       </property>
+       <property name="placeholderText">
+        <string>Range To</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="grayLevelOtherwiseInput">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The value to be set if r(i,j) not in range [A,B] if this value is not provided r(i,j) = r(i,j) it will not replace the value out of range.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+       </property>
+       <property name="placeholderText">
+        <string>Otherwise</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="grayLevelSlicingBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Submit</string>
        </property>

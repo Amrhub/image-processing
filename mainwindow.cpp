@@ -11,7 +11,7 @@
 using namespace cv;
 using namespace std;
 
-int imageDepth2Pixels(int depth)
+int imageDepth2Bits(int depth)
 {
     switch (depth)
     {
@@ -64,16 +64,21 @@ tuple<int, int, int> imageMinMaxAvg(Mat img)
     return make_tuple(min, max, pixelsValues / img.total());
 }
 
-int imgSize(Mat img)
+void showImage(string windowName, Mat image)
 {
-    return img.total() * imageDepth2Pixels(img.depth());
+    namedWindow(windowName);
+    imshow(windowName, image);
+    waitKey(0);
+    destroyWindow(windowName);
 }
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow)
+int imgSize(Mat img)
 {
-    ui->setupUi(this);
+    return img.total() * imageDepth2Bits(img.depth());
+}
 
+void MainWindow::setupBtnFunctionalities()
+{
     connect(ui->uploadBtn, &QPushButton::clicked, this, &MainWindow::onUploadButtonClicked);
     connect(ui->grayImageBtn, &QPushButton::clicked, this, &MainWindow::onConvertImage2GrayClicked);
     connect(ui->showImageBtn, &QPushButton::clicked, this, &MainWindow::onShowImageButtonClicked);
@@ -82,8 +87,35 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->skewImageBtn, &QPushButton::clicked, this, &MainWindow::onSkewImageBtnClicked);
     connect(ui->flipImageBtn, &QPushButton::clicked, this, &MainWindow::onFlipImageBtnClicked);
     connect(ui->zoomImageBtn, &QPushButton::clicked, this, &MainWindow::onZoomImageBtnClicked);
+    connect(ui->histogramBtn, &QPushButton::clicked, this, &MainWindow::onHistogramBtnClicked);
+    connect(ui->imageNegativeBtn, &QPushButton::clicked, this, &MainWindow::onImageNegativeBtnClicked);
+    connect(ui->logarithmicBtn, &QPushButton::clicked, this, &MainWindow::onLogarithmicTransformationBtnClicked);
+    connect(ui->powerTransformationBtn, &QPushButton::clicked, this, &MainWindow::onPowerTransformationBtnClicked);
+    connect(ui->bitPlaneSlicingBtn, &QPushButton::clicked, this, &MainWindow::onBitPlaneSlicingBtnClicked);
+    connect(ui->grayLevelSlicingBtn, &QPushButton::clicked, this, &MainWindow::onGrayLevelSlicingBtnClicked);
+}
 
+void MainWindow::enableBtnsOnUpload()
+{
+    ui->grayImageBtn->setEnabled(true);
+    ui->showImageBtn->setEnabled(true);
+    ui->translateImageBtn->setEnabled(true);
+    ui->rotateImageBtn->setEnabled(true);
+    ui->skewImageBtn->setEnabled(true);
+    ui->flipImageBtn->setEnabled(true);
+    ui->zoomImageBtn->setEnabled(true);
+    ui->histogramBtn->setEnabled(true);
+    ui->imageNegativeBtn->setEnabled(true);
+    ui->logarithmicBtn->setEnabled(true);
+    ui->powerTransformationBtn->setEnabled(true);
+    ui->bitPlaneSlicingBtn->setEnabled(true);
+    ui->grayLevelSlicingBtn->setEnabled(true);
+}
+
+void MainWindow::setValidation()
+{
     QValidator *doubleInputsValidator = new QDoubleValidator(-99999, 99999, 3);
+    QValidator *inRangeValidator = new QIntValidator(0, pow(2, imageDepth2Bits(image.depth())) - 1);
 
     // Translate validations
     ui->txInput->setValidator(doubleInputsValidator);
@@ -100,6 +132,48 @@ MainWindow::MainWindow(QWidget *parent)
     ui->zoomYInput->setValidator(doubleInputsValidator);
     ui->zoomTInput->setValidator(doubleInputsValidator);
     ui->zoomSInput->setValidator(doubleInputsValidator);
+
+    // Gray Level Slicing
+    ui->grayLevelFromInput->setValidator(inRangeValidator);
+    ui->grayLevelToInput->setValidator(new QIntValidator(ui->grayLevelFromInput->text().toInt(), pow(2, imageDepth2Bits(image.depth())) - 1));
+}
+
+void MainWindow::initializeDataOnUpload()
+{
+    int rows = image.rows;
+    int cols = image.cols;
+
+    // set default rotate values
+    ui->rotateX->setText(QString::fromStdString(to_string(cols / 2)));
+    ui->rotateY->setText(QString::fromStdString(to_string(rows / 2)));
+    ui->rotateAngle->setText(QString::fromStdString(to_string(45)));
+    ui->scale->setText(QString::fromStdString(to_string(1)));
+
+    // set default skewing values
+    ui->skewXInput->setText(QString::fromStdString(to_string(0)));
+    ui->skewYInput->setText(QString::fromStdString(to_string(0)));
+    ui->skewXNewInput->setText(QString::fromStdString(to_string(0)));
+    ui->skewYNewInput->setText(QString::fromStdString(to_string(0)));
+    ui->skewXInput_2->setText(QString::fromStdString(to_string(cols - 1)));
+    ui->skewYInput_2->setText(QString::fromStdString(to_string(0)));
+    ui->skewXNewInput_2->setText(QString::fromStdString(to_string(cols - 1)));
+    ui->skewYNewInput_2->setText(QString::fromStdString(to_string(0)));
+    ui->skewYNewInput_3->setText(QString::fromStdString(to_string(rows - 1)));
+    ui->skewYInput_3->setText(QString::fromStdString(to_string(rows - 1)));
+
+    // set default zoom values
+    ui->zoomXInput->setText(QString::fromStdString(to_string(0)));
+    ui->zoomYInput->setText(QString::fromStdString(to_string(0)));
+    ui->zoomXMultiplier->setText(QString::fromStdString(to_string(2)));
+    ui->zoomYMultiplier->setText(QString::fromStdString(to_string(2)));
+}
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+
+    MainWindow::setupBtnFunctionalities();
 }
 
 MainWindow::~MainWindow()
@@ -114,55 +188,26 @@ void MainWindow::onUploadButtonClicked()
     if (!fileName.isEmpty())
     {
         image = imread(fileName.toStdString());
-        auto [total, rows, cols, depth] = imageDetails(image);
-        auto [min, max, avg] = imageMinMaxAvg(image);
-        ui->imageDescription->setText(QString::fromStdString(
-            "Path: " + fileName.toStdString() + "\n" +
-            "Dimensions (RowsXCols): " + to_string(rows) + "x" + to_string(cols) + "\n" +
-            "Total pixels: " + to_string(total) + "\n" +
-            "Depth code: " + to_string(depth) + "\n" +
-            "Minimum pixel value: " + to_string(min) + "\n" +
-            "Maximum pixel value: " + to_string(max) + "\n" +
-            "Dynamic range: (" + to_string(min) + ", " + to_string(max) + ")" + "\n" +
-            "Average pixel value: " + to_string(avg) + "\n" +
-            "Total number of bits required to store the image: " + to_string(imgSize(image))));
-
         if (!image.empty())
         {
-            ui->grayImageBtn->setEnabled(true);
-            ui->showImageBtn->setEnabled(true);
-            ui->translateImageBtn->setEnabled(true);
-            ui->rotateImageBtn->setEnabled(true);
-            ui->skewImageBtn->setEnabled(true);
-            ui->flipImageBtn->setEnabled(true);
-            ui->zoomImageBtn->setEnabled(true);
+            cvtColor(image, imageGrayed, COLOR_RGB2GRAY);
 
-            int rows = image.rows;
-            int cols = image.cols;
+            auto [total, rows, cols, depth] = imageDetails(image);
+            auto [min, max, avg] = imageMinMaxAvg(image);
+            ui->imageDescription->setText(QString::fromStdString(
+                "Path: " + fileName.toStdString() + "\n" +
+                "Dimensions (RowsXCols): " + to_string(rows) + "x" + to_string(cols) + "\n" +
+                "Total pixels: " + to_string(total) + "\n" +
+                "Depth code: " + to_string(depth) + "\n" +
+                "Minimum pixel value: " + to_string(min) + "\n" +
+                "Maximum pixel value: " + to_string(max) + "\n" +
+                "Dynamic range: (" + to_string(min) + ", " + to_string(max) + ")" + "\n" +
+                "Average pixel value: " + to_string(avg) + "\n" +
+                "Total number of bits required to store the image: " + to_string(imgSize(image))));
 
-            // set default rotate values
-            ui->rotateX->setText(QString::fromStdString(to_string(cols / 2)));
-            ui->rotateY->setText(QString::fromStdString(to_string(rows / 2)));
-            ui->rotateAngle->setText(QString::fromStdString(to_string(45)));
-            ui->scale->setText(QString::fromStdString(to_string(1)));
-
-            // set default skewing values
-            ui->skewXInput->setText(QString::fromStdString(to_string(0)));
-            ui->skewYInput->setText(QString::fromStdString(to_string(0)));
-            ui->skewXNewInput->setText(QString::fromStdString(to_string(0)));
-            ui->skewYNewInput->setText(QString::fromStdString(to_string(0)));
-            ui->skewXInput_2->setText(QString::fromStdString(to_string(cols - 1)));
-            ui->skewYInput_2->setText(QString::fromStdString(to_string(0)));
-            ui->skewXNewInput_2->setText(QString::fromStdString(to_string(cols - 1)));
-            ui->skewYNewInput_2->setText(QString::fromStdString(to_string(0)));
-            ui->skewYNewInput_3->setText(QString::fromStdString(to_string(rows - 1)));
-            ui->skewYInput_3->setText(QString::fromStdString(to_string(rows - 1)));
-
-            // set default zoom values
-            ui->zoomXInput->setText(QString::fromStdString(to_string(0)));
-            ui->zoomYInput->setText(QString::fromStdString(to_string(0)));
-            ui->zoomXMultiplier->setText(QString::fromStdString(to_string(2)));
-            ui->zoomYMultiplier->setText(QString::fromStdString(to_string(2)));
+            MainWindow::enableBtnsOnUpload();
+            MainWindow::setValidation();
+            MainWindow::initializeDataOnUpload();
         }
         else
         {
@@ -173,38 +218,24 @@ void MainWindow::onUploadButtonClicked()
 
 void MainWindow::onShowImageButtonClicked()
 {
-    string windowName = "Original Image";
-    namedWindow(windowName, WINDOW_NORMAL);
-    imshow(windowName, image);
-    waitKey(0);
-    destroyWindow(windowName);
+    showImage("Original Image", image);
 }
 
 void MainWindow::onConvertImage2GrayClicked()
 {
-    string windowName = "Grayed Image";
-    Mat dst;
-
-    cvtColor(image, dst, COLOR_RGB2GRAY);
-    namedWindow(windowName);
-    imshow(windowName, dst);
-    waitKey(0);
-    destroyWindow(windowName);
+    Mat dstImage;
+    cvtColor(image, dstImage, COLOR_RGB2GRAY);
+    showImage("Grayed Image", dstImage);
 }
 
 void MainWindow::onTranslateImageBtnClicked()
 {
     // get tx, ty values from inputs.
-    string windowName = "Translation";
     float txValue = ui->txInput->text().toFloat();
     float tyValue = ui->tyInput->text().toFloat();
     Mat translationMatrix = (Mat_<float>(2, 3) << 1, 0, txValue, 0, 1, tyValue), dstTranslationImg;
     warpAffine(image, dstTranslationImg, translationMatrix, image.size());
-
-    namedWindow(windowName);
-    imshow(windowName, dstTranslationImg);
-    waitKey(0);
-    destroyWindow(windowName);
+    showImage("Translation", dstTranslationImg);
 }
 
 void MainWindow::onRotateImageBtnClicked()
@@ -221,13 +252,7 @@ void MainWindow::onRotateImageBtnClicked()
     Mat dstRotationImage;
     Mat rotationMatrix = getRotationMatrix2D(Point2f(rotateX, rotateY), rotateAngle, scale);
     warpAffine(image, dstRotationImage, rotationMatrix, image.size());
-
-    string windowName = "Rotate";
-
-    namedWindow(windowName);
-    imshow(windowName, dstRotationImage);
-    waitKey(0);
-    destroyWindow(windowName);
+    showImage("Rotate", dstRotationImage);
 }
 
 void MainWindow::onSkewImageBtnClicked()
@@ -259,12 +284,7 @@ void MainWindow::onSkewImageBtnClicked()
     Mat skewingMatrix = getAffineTransform(srcPoints, dstPoints);
     Mat dstSkewingImage;
     warpAffine(image, dstSkewingImage, skewingMatrix, image.size());
-
-    string windowName = "Skew";
-    namedWindow(windowName);
-    imshow(windowName, dstSkewingImage);
-    waitKey(0);
-    destroyWindow(windowName);
+    showImage("SKew", dstSkewingImage);
 }
 
 void MainWindow::onFlipImageBtnClicked()
@@ -289,10 +309,7 @@ void MainWindow::onFlipImageBtnClicked()
         break;
     }
 
-    namedWindow(windowName);
-    imshow(windowName, flippedImage);
-    waitKey(0);
-    destroyWindow(windowName);
+    showImage(windowName, flippedImage);
 }
 
 void MainWindow::onZoomImageBtnClicked()
@@ -311,9 +328,114 @@ void MainWindow::onZoomImageBtnClicked()
 
     string windowName = "Zoom";
     windowName += fillingTechnique == 0 ? " (Nearest Neighbor)" : " (Bi-linear)";
+    showImage(windowName, dstImage);
+}
 
-    namedWindow(windowName);
-    imshow(windowName, dstImage);
-    waitKey(0);
-    destroyWindow(windowName);
+void MainWindow::onHistogramBtnClicked()
+{
+    // TODO add diagram and show equalized gray level.
+    Mat dstImage;
+    equalizeHist(imageGrayed, dstImage);
+    showImage("Histogram equalized", dstImage);
+}
+
+void MainWindow::onImageNegativeBtnClicked()
+{
+    Mat dstImage = imageGrayed.clone();
+
+    for (int i = 0; i < dstImage.rows; i++)
+    {
+        for (int j = 0; j < dstImage.cols; j++)
+        {
+            int pixelValue = dstImage.at<uchar>(i, j);
+            int maxPixelValue = pow(2, imageDepth2Bits(dstImage.depth())) - 1;
+            dstImage.at<uchar>(i, j) = maxPixelValue - pixelValue;
+        }
+    }
+
+    showImage("Image Negative Transformation", dstImage);
+}
+
+void MainWindow::onLogarithmicTransformationBtnClicked()
+{
+    Mat dstImage = imageGrayed.clone();
+    dstImage.convertTo(dstImage, CV_32F);
+
+    for (int i = 0; i < dstImage.rows; i++)
+    {
+        for (int j = 0; j < dstImage.cols; j++)
+        {
+            int pixelValue = dstImage.at<float>(i, j);
+            dstImage.at<float>(i, j) = log(pixelValue + 1);
+        }
+    }
+
+    normalize(dstImage, dstImage, 0, 255, NORM_MINMAX);
+    convertScaleAbs(dstImage, dstImage);
+
+    showImage("Logarithmic Transformation", dstImage);
+}
+
+void MainWindow::onPowerTransformationBtnClicked()
+{
+    Mat dstImage = imageGrayed.clone();
+    float gammaValue = ui->gammaInput->text().toFloat();
+    int totalImageBits = imageDepth2Bits(dstImage.depth());
+    int maxPixelValue = pow(2, totalImageBits) - 1;
+
+    dstImage.convertTo(dstImage, CV_32F);
+
+    for (int i = 0; i < dstImage.rows; i++)
+    {
+        for (int j = 0; j < dstImage.cols; j++)
+        {
+            float pixelValue = dstImage.at<float>(i, j);
+            dstImage.at<float>(i, j) = pow(pixelValue, gammaValue);
+        }
+    }
+
+    normalize(dstImage, dstImage, 0, maxPixelValue, NORM_MINMAX);
+    convertScaleAbs(dstImage, dstImage);
+    showImage("Power Law Transformation", dstImage);
+}
+
+void MainWindow::onBitPlaneSlicingBtnClicked()
+{
+    Mat dstImage = imageGrayed.clone();
+    int maxPixelValue = pow(2, imageDepth2Bits(dstImage.depth()));
+    int msbValue = maxPixelValue / 2;
+
+    for (int i = 0; i < dstImage.rows; i++)
+    {
+        for (int j = 0; j < dstImage.cols; j++)
+        {
+            int pixelValue = dstImage.at<uchar>(i, j);
+            dstImage.at<uchar>(i, j) = pixelValue & msbValue ? 255 : 0;
+        }
+    }
+
+    showImage("Bit plane slicing", dstImage);
+}
+
+void MainWindow::onGrayLevelSlicingBtnClicked()
+{
+    Mat dstImage = imageGrayed.clone();
+    int fromValue = ui->grayLevelFromInput->text().toInt();
+    int toValue = ui->grayLevelFromInput->text().toInt();
+    QString constantInput = ui->grayLevelOtherwiseInput->text();
+    // TODO display pixelValues in image as value => frequency
+
+    for (int i = 0; i < dstImage.rows; i++)
+    {
+        for (int j = 0; j < dstImage.cols; j++)
+        {
+            int pixelValue = dstImage.at<uchar>(i, j);
+            if (pixelValue >= fromValue && pixelValue <= toValue)
+                dstImage.at<uchar>(i, j) = 255;
+            else
+                dstImage.at<uchar>(i, j) = (!constantInput.isEmpty() ? constantInput.toInt() : pixelValue);
+        }
+    }
+
+    showImage("Gray Level Slicing", dstImage);
 }

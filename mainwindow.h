@@ -18,6 +18,12 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    void setupBtnFunctionalities();
+    void enableBtnsOnUpload();
+    void initializeDataOnUpload();
+    void setValidation();
+
     void onUploadButtonClicked();
     void onShowImageButtonClicked();
     void onConvertImage2GrayClicked();
@@ -26,8 +32,15 @@ public:
     void onSkewImageBtnClicked();
     void onFlipImageBtnClicked();
     void onZoomImageBtnClicked();
+    void onHistogramBtnClicked();
+    void onImageNegativeBtnClicked();
+    void onLogarithmicTransformationBtnClicked();
+    void onPowerTransformationBtnClicked();
+    void onBitPlaneSlicingBtnClicked();
+    void onGrayLevelSlicingBtnClicked();
 
     cv::Mat image;
+    cv::Mat imageGrayed;
 
 private:
     Ui::MainWindow *ui;

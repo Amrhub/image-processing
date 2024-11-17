@@ -80,43 +80,43 @@ CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.o:
 CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.o: image-processing_autogen/mocs_compilation.cpp
 CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.o: CMakeFiles/image-processing.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/amrmac/Work/Study/University/image-processing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.o -MF CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.o.d -o CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.o -c /Users/amrmac/Work/Study/University/image-processing/build/image-processing_autogen/mocs_compilation.cpp
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.o -MF CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.o.d -o CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.o -c /Users/amrmac/Work/Study/University/image-processing/build/image-processing_autogen/mocs_compilation.cpp
 
 CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/amrmac/Work/Study/University/image-processing/build/image-processing_autogen/mocs_compilation.cpp > CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.i
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/amrmac/Work/Study/University/image-processing/build/image-processing_autogen/mocs_compilation.cpp > CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.i
 
 CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/amrmac/Work/Study/University/image-processing/build/image-processing_autogen/mocs_compilation.cpp -o CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.s
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/amrmac/Work/Study/University/image-processing/build/image-processing_autogen/mocs_compilation.cpp -o CMakeFiles/image-processing.dir/image-processing_autogen/mocs_compilation.cpp.s
 
 CMakeFiles/image-processing.dir/main.cpp.o: CMakeFiles/image-processing.dir/flags.make
 CMakeFiles/image-processing.dir/main.cpp.o: /Users/amrmac/Work/Study/University/image-processing/main.cpp
 CMakeFiles/image-processing.dir/main.cpp.o: CMakeFiles/image-processing.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/amrmac/Work/Study/University/image-processing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/image-processing.dir/main.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/image-processing.dir/main.cpp.o -MF CMakeFiles/image-processing.dir/main.cpp.o.d -o CMakeFiles/image-processing.dir/main.cpp.o -c /Users/amrmac/Work/Study/University/image-processing/main.cpp
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/image-processing.dir/main.cpp.o -MF CMakeFiles/image-processing.dir/main.cpp.o.d -o CMakeFiles/image-processing.dir/main.cpp.o -c /Users/amrmac/Work/Study/University/image-processing/main.cpp
 
 CMakeFiles/image-processing.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/image-processing.dir/main.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/amrmac/Work/Study/University/image-processing/main.cpp > CMakeFiles/image-processing.dir/main.cpp.i
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/amrmac/Work/Study/University/image-processing/main.cpp > CMakeFiles/image-processing.dir/main.cpp.i
 
 CMakeFiles/image-processing.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/image-processing.dir/main.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/amrmac/Work/Study/University/image-processing/main.cpp -o CMakeFiles/image-processing.dir/main.cpp.s
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/amrmac/Work/Study/University/image-processing/main.cpp -o CMakeFiles/image-processing.dir/main.cpp.s
 
 CMakeFiles/image-processing.dir/mainwindow.cpp.o: CMakeFiles/image-processing.dir/flags.make
 CMakeFiles/image-processing.dir/mainwindow.cpp.o: /Users/amrmac/Work/Study/University/image-processing/mainwindow.cpp
 CMakeFiles/image-processing.dir/mainwindow.cpp.o: CMakeFiles/image-processing.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/amrmac/Work/Study/University/image-processing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/image-processing.dir/mainwindow.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/image-processing.dir/mainwindow.cpp.o -MF CMakeFiles/image-processing.dir/mainwindow.cpp.o.d -o CMakeFiles/image-processing.dir/mainwindow.cpp.o -c /Users/amrmac/Work/Study/University/image-processing/mainwindow.cpp
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/image-processing.dir/mainwindow.cpp.o -MF CMakeFiles/image-processing.dir/mainwindow.cpp.o.d -o CMakeFiles/image-processing.dir/mainwindow.cpp.o -c /Users/amrmac/Work/Study/University/image-processing/mainwindow.cpp
 
 CMakeFiles/image-processing.dir/mainwindow.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/image-processing.dir/mainwindow.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/amrmac/Work/Study/University/image-processing/mainwindow.cpp > CMakeFiles/image-processing.dir/mainwindow.cpp.i
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/amrmac/Work/Study/University/image-processing/mainwindow.cpp > CMakeFiles/image-processing.dir/mainwindow.cpp.i
 
 CMakeFiles/image-processing.dir/mainwindow.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/image-processing.dir/mainwindow.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/amrmac/Work/Study/University/image-processing/mainwindow.cpp -o CMakeFiles/image-processing.dir/mainwindow.cpp.s
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/amrmac/Work/Study/University/image-processing/mainwindow.cpp -o CMakeFiles/image-processing.dir/mainwindow.cpp.s
 
 # Object files for target image-processing
 image__processing_OBJECTS = \
