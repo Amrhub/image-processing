@@ -3,6 +3,7 @@
 cmake installed. 
 ```bash
 brew install cmake@3.30.5
+brew install qt@6.7.2
 ```
 
 # Build 
