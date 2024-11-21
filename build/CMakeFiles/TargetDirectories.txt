@@ -1,9 +1,0 @@
-/Users/amrmac/Work/Study/University/image-processing/build/CMakeFiles/image-processing.dir
-/Users/amrmac/Work/Study/University/image-processing/build/CMakeFiles/edit_cache.dir
-/Users/amrmac/Work/Study/University/image-processing/build/CMakeFiles/rebuild_cache.dir
-/Users/amrmac/Work/Study/University/image-processing/build/CMakeFiles/list_install_components.dir
-/Users/amrmac/Work/Study/University/image-processing/build/CMakeFiles/install.dir
-/Users/amrmac/Work/Study/University/image-processing/build/CMakeFiles/install/local.dir
-/Users/amrmac/Work/Study/University/image-processing/build/CMakeFiles/install/strip.dir
-/Users/amrmac/Work/Study/University/image-processing/build/CMakeFiles/image-processing_autogen_timestamp_deps.dir
-/Users/amrmac/Work/Study/University/image-processing/build/CMakeFiles/image-processing_autogen.dir

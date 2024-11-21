@@ -439,3 +439,5 @@ void MainWindow::onGrayLevelSlicingBtnClicked()
 
     showImage("Gray Level Slicing", dstImage);
 }
+
+// TBC
