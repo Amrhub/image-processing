@@ -38,9 +38,14 @@ public:
     void onPowerTransformationBtnClicked();
     void onBitPlaneSlicingBtnClicked();
     void onGrayLevelSlicingBtnClicked();
+    void onSmoothingFiltersBtnClicked();
 
     cv::Mat image;
     cv::Mat imageGrayed;
+    cv::Mat traditionalKernel3x3 = (cv::Mat_<float>(3, 3) << 1, 1, 1, 1, 1, 1, 1, 1, 1) / 9;
+    cv::Mat pyramidalKernel5x5 = (cv::Mat_<float>(5, 5) << 1, 2, 3, 2, 1, 2, 4, 6, 4, 2, 3, 6, 9, 6, 3, 2, 4, 6, 4, 2, 1, 2, 3, 2, 1) / 81;
+    cv::Mat circularKernel5x5 = (cv::Mat_<float>(5, 5) << 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0) / 21;
+    cv::Mat coneKernel5x5 = (cv::Mat_<float>(5, 5) << 0, 0, 1, 0, 0, 0, 2, 2, 2, 0, 1, 2, 5, 2, 1, 0, 2, 2, 2, 0, 0, 0, 1, 0, 0) / 25;
 
 private:
     Ui::MainWindow *ui;

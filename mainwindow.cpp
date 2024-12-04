@@ -31,6 +31,34 @@ int imageDepth2Bits(int depth)
     }
 }
 
+// Limit 5 rows and 5 cols for brevity
+void logMat(const cv::Mat &mat)
+{
+    QString output;
+    output += QString("cv::Mat [rows=%1, cols=%2]\n")
+                  .arg(mat.rows)
+                  .arg(mat.cols);
+
+    if (!mat.empty())
+    {
+        output += "Data:\n";
+        for (int i = 0; i < std::min(5, mat.rows); ++i)
+        {
+            for (int j = 0; j < std::min(5, mat.cols); ++j)
+            {
+                output += QString::number(mat.at<float>(i, j)) + " ";
+            }
+            output += "\n";
+        }
+    }
+    else
+    {
+        output += "(empty)";
+    }
+
+    qInfo().noquote() << output; // Use .noquote() to prevent escaping
+}
+
 tuple<int, int, int, int> imageDetails(Mat img)
 {
     return make_tuple((int)img.total(), (int)img.rows, (int)img.cols, (int)img.depth());
@@ -93,6 +121,7 @@ void MainWindow::setupBtnFunctionalities()
     connect(ui->powerTransformationBtn, &QPushButton::clicked, this, &MainWindow::onPowerTransformationBtnClicked);
     connect(ui->bitPlaneSlicingBtn, &QPushButton::clicked, this, &MainWindow::onBitPlaneSlicingBtnClicked);
     connect(ui->grayLevelSlicingBtn, &QPushButton::clicked, this, &MainWindow::onGrayLevelSlicingBtnClicked);
+    connect(ui->smoothingFiltersBtn, &QPushButton::clicked, this, &MainWindow::onSmoothingFiltersBtnClicked);
 }
 
 void MainWindow::enableBtnsOnUpload()
@@ -110,6 +139,7 @@ void MainWindow::enableBtnsOnUpload()
     ui->powerTransformationBtn->setEnabled(true);
     ui->bitPlaneSlicingBtn->setEnabled(true);
     ui->grayLevelSlicingBtn->setEnabled(true);
+    ui->smoothingFiltersBtn->setEnabled(true);
 }
 
 void MainWindow::setValidation()
@@ -220,7 +250,6 @@ void MainWindow::onShowImageButtonClicked()
 {
     showImage("Original Image", image);
 }
-
 void MainWindow::onConvertImage2GrayClicked()
 {
     Mat dstImage;
@@ -359,6 +388,9 @@ void MainWindow::onImageNegativeBtnClicked()
 void MainWindow::onLogarithmicTransformationBtnClicked()
 {
     Mat dstImage = imageGrayed.clone();
+    int imageBits = imageDepth2Bits(dstImage.depth());
+    int maxPixelValue = pow(2, imageBits) - 1;
+
     dstImage.convertTo(dstImage, CV_32F);
 
     for (int i = 0; i < dstImage.rows; i++)
@@ -370,7 +402,7 @@ void MainWindow::onLogarithmicTransformationBtnClicked()
         }
     }
 
-    normalize(dstImage, dstImage, 0, 255, NORM_MINMAX);
+    normalize(dstImage, dstImage, 0, maxPixelValue, NORM_MINMAX);
     convertScaleAbs(dstImage, dstImage);
 
     showImage("Logarithmic Transformation", dstImage);
@@ -380,8 +412,8 @@ void MainWindow::onPowerTransformationBtnClicked()
 {
     Mat dstImage = imageGrayed.clone();
     float gammaValue = ui->gammaInput->text().toFloat();
-    int totalImageBits = imageDepth2Bits(dstImage.depth());
-    int maxPixelValue = pow(2, totalImageBits) - 1;
+    int imageBits = imageDepth2Bits(dstImage.depth());
+    int maxPixelValue = pow(2, imageBits) - 1;
 
     dstImage.convertTo(dstImage, CV_32F);
 
@@ -440,4 +472,37 @@ void MainWindow::onGrayLevelSlicingBtnClicked()
     showImage("Gray Level Slicing", dstImage);
 }
 
-// TBC
+void MainWindow::onSmoothingFiltersBtnClicked()
+{
+    Mat dstImage, kernel;
+    string kernelOption = ui->kernelSelectInput->currentText().toStdString();
+    QDebug deb = qDebug();
+    deb << "Selected Kernel Option" << kernelOption;
+
+    if (kernelOption == "traditionalKernel3x3")
+    {
+        kernel = traditionalKernel3x3;
+    }
+    else if (kernelOption == "pyramidalKernel5x5")
+    {
+        kernel = pyramidalKernel5x5;
+    }
+    else if (kernelOption == "circularKernel5x5")
+    {
+        kernel = circularKernel5x5;
+    }
+    else if (kernelOption == "coneKernel5x5")
+    {
+        kernel = coneKernel5x5;
+    }
+    else
+    {
+        QMessageBox::warning(this, "Error", "Please select smoothing filters select");
+        return;
+    }
+
+    logMat(kernel);
+
+    filter2D(image, dstImage, CV_8UC1, kernel);
+    showImage(kernelOption, dstImage);
+}

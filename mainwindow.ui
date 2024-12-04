@@ -1206,6 +1206,71 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </item>
     </layout>
    </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>910</x>
+      <y>190</y>
+      <width>234</width>
+      <height>115</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_10">
+     <item>
+      <widget class="QLabel" name="smoothingFilters">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Smoothing Spatial filters</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="kernelSelectInput">
+       <property name="placeholderText">
+        <string>Kernel Option</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>traditionalKernel3x3</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>pyramidalKernel5x5</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>circularKernel5x5</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>coneKernel5x5</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="smoothingFiltersBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Submit</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
