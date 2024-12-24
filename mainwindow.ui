@@ -135,6 +135,12 @@
   <property name="styleSheet">
    <string notr="true">background-color: #2e2f30;</string>
   </property>
+  <property name="iconSize">
+   <size>
+    <width>54</width>
+    <height>54</height>
+   </size>
+  </property>
   <property name="animated">
    <bool>true</bool>
   </property>
