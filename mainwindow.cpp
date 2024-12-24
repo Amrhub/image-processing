@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include <QPushButton>
+#include <QToolButton>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QCheckBox>
@@ -17,7 +18,7 @@ using namespace std;
 bool didEditFinish = false, shouldRotate;
 int prevX, prevY, d0 = 50;
 float angle, scale = 1;
-Mat image, imageGrayed, ROI, dstTranslatedImage, dstRotatedImage, dstBrightnessAdjustedImage, dstZoomedImage, dstAreaOfInterestImage, dstDeSkewedImage, dstSmoothedImage, dstFrequencyDomainImage;
+Mat image, imageGrayed, ROI, dstTranslatedImage, dstRotatedImage, dstZoomedImage, dstAreaOfInterestImage, dstDeSkewedImage, dstSmoothedImage, dstFrequencyDomainImage;
 vector<Point> vertices;
 vector<Mat> images;
 vector<Point2f> srcPoints, dstPoints;
@@ -30,10 +31,12 @@ struct NumberFrequency
     double probability;
 };
 
-struct BrightnessAdjustmentData
+struct TrackbarWindowData
 {
     cv::Mat image;
-    cv::Mat dstBrightnessAdjustedImage;
+    cv::Mat dstImage;
+    string windowName;
+    MainWindow *mainWindow;
 };
 
 struct ZoomData
@@ -42,46 +45,18 @@ struct ZoomData
     // optional kernel make it optional to use a kernel
     cv::Mat kernel;
 };
-// Crop Handler
-// void CallBackFunc(int event, int x, int y, int flags, void *userdata)
-// {
-//     if (event == EVENT_RBUTTONDOWN)
-//     {
-//         cout << "Right mouse button clicked at (" << x << ", " << y << ")" << endl;
-//         if (vertices.size() < 2)
-//         {
-//             cout << "You need a minimum of three points!" << endl;
-//             return;
-//         }
-//         // Close polygon
-//         line(image, vertices[vertices.size() - 1], vertices[0], Scalar(0, 0, 0));
 
-//         // Mask is black with white where our ROI is
-//         Mat mask = Mat::zeros(image.rows, image.cols, CV_8UC1);
-//         vector<vector<Point>> pts{vertices};
-//         fillPoly(mask, pts, Scalar(255, 255, 255));
-//         image.copyTo(ROI, mask);
-//         didEditFinish = true;
+enum KeyCodes
+{
+    SPACE = 32,
+    ENTER = 13,
+    ESC = 27,
+};
 
-//         return;
-//     }
-//     if (event == EVENT_LBUTTONDOWN)
-//     {
-//         cout << "Left mouse button clicked at (" << x << ", " << y << ")" << endl;
-//         if (vertices.size() == 0)
-//         {
-//             // First click - just draw point
-//             image.at<Vec3b>(x, y) = Vec3b(255, 0, 0);
-//         }
-//         else
-//         {
-//             // Second, or later click, draw line to previous vertex
-//             line(image, Point(x, y), vertices[vertices.size() - 1], Scalar(0, 0, 0));
-//         }
-//         vertices.push_back(Point(x, y));
-//         return;
-//     }
-// }
+// map that holds the category and all QPushButton that are subItems of that category
+QMap<Categories, std::vector<QToolButton *>> categorySubItems;
+
+QMap<Categories, QPushButton *> categoryBtns;
 
 void resetEdit()
 {
@@ -208,10 +183,21 @@ void zoomWindowMouseHandler(int event, int x, int y, int flags, void *zoomData)
 
     if (event == EVENT_LBUTTONDOWN)
     {
+        int xStart = prevX - rectangleSize;
+        int yStart = prevY - rectangleSize;
+        int xEnd = prevX + rectangleSize;
+        int yEnd = prevY + rectangleSize;
+        rectangleSize -= 1;
+
+        if (xStart < 0 || yStart < 0 || xEnd > image.cols || yEnd > image.rows)
+        {
+            QMessageBox::warning(nullptr, "Error", "Please select a valid area to zoom");
+            return;
+        }
+
         Mat croppedImage = image(Rect(prevX - rectangleSize, prevY - rectangleSize, rectangleSize * 2, rectangleSize * 2));
         cv::resize(croppedImage, image, Size(), 2, 2);
         image.copyTo(dstZoomedImage);
-        // TODO whenever we discard the zooming, we should reset the image to the original image. images[currentImageIndex].copyTo(image);
     }
 
     if (event == EVENT_RBUTTONDOWN)
@@ -316,7 +302,6 @@ void areaOfInterestMouseHandler(int event, int x, int y, int flags, void *areaOf
             }
         }
         imageGrayed.copyTo(dstAreaOfInterestImage);
-        // TODO whenever we discard the zooming, we should reset the image to the original image. images[currentImageIndex].copyTo(image);
     }
 
     if (event == EVENT_RBUTTONDOWN)
@@ -390,9 +375,13 @@ void smoothingFiltersMouseHandler(int event, int x, int y, int, void *smoothImag
 
     if (event == EVENT_LBUTTONDOWN)
     {
-        Mat tempImage = image.clone();
-        image.copyTo(dstSmoothedImage);
-        filter2D(image, tempImage, CV_8UC1, kernel);
+        if (image.channels() != 1)
+            cvtColor(image, imageGrayed, COLOR_BGR2GRAY);
+        else
+            image.copyTo(imageGrayed);
+        Mat tempImage = imageGrayed.clone();
+        imageGrayed.copyTo(dstSmoothedImage);
+        filter2D(imageGrayed, tempImage, CV_8UC1, kernel);
         int initialI = prevY - rectangleSize;
         int initialJ = prevX - rectangleSize;
         int finalI = prevY + rectangleSize;
@@ -433,6 +422,47 @@ void smoothingFiltersMouseHandler(int event, int x, int y, int, void *smoothImag
     {
         image.copyTo(dstSmoothedImage);
         didEditFinish = true;
+    }
+}
+
+void brightnessAdjustmentMouseHandler(int event, int x, int y, int, void *data)
+{
+    if (event == EVENT_RBUTTONDOWN)
+    {
+        TrackbarWindowData *userData = (TrackbarWindowData *)data;
+        userData->dstImage.copyTo(image);
+        userData->mainWindow->onImageProcessingSubmit(true);
+        destroyWindow(userData->windowName);
+    }
+}
+
+void frequencyDomainMouseHandler(int event, int x, int y, int, void *data)
+{
+    if (event == EVENT_RBUTTONDOWN)
+    {
+        TrackbarWindowData *userData = (TrackbarWindowData *)data;
+
+        didEditFinish = true;
+        destroyWindow(userData->windowName);
+        userData->dstImage.copyTo(image);
+        userData->mainWindow->onImageProcessingSubmit(true);
+    }
+}
+
+void segmentationThresholdingMouseHandler(int event, int x, int y, int, void *data)
+{
+    cout << "EVENT: " << event << endl;
+    if (event == EVENT_RBUTTONDOWN)
+    {
+        didEditFinish = true;
+        TrackbarWindowData *userData = (TrackbarWindowData *)data;
+        cout << "Destroying window: " << userData->windowName << endl;
+        destroyWindow(userData->windowName);
+        cout << "Copying image to main image" << endl;
+        userData->dstImage.copyTo(image);
+        cout << "Calling onImageProcessingSubmit" << endl;
+        userData->mainWindow->onImageProcessingSubmit(true);
+        cout << "Finished" << endl;
     }
 }
 
@@ -573,6 +603,7 @@ int MainWindow::showFlipPopup()
     QMessageBox msgBox;
     msgBox.setWindowTitle("Select Option");
     msgBox.setText("Flip the image:");
+    msgBox.setStandardButtons(QMessageBox::Close);
     QPushButton *horizontalButton = msgBox.addButton("Horizontally", QMessageBox::NoRole);
     QPushButton *verticalButton = msgBox.addButton("Vertically", QMessageBox::NoRole);
     QPushButton *bothButton = msgBox.addButton("Both", QMessageBox::NoRole);
@@ -594,24 +625,44 @@ int MainWindow::showFlipPopup()
     return -2;
 }
 
+void MainWindow::changeToolCategory(Categories category)
+{
+    // Hide all QToolButtons or QPushButtons in the subItemsScrollArea except the one at the index of the current category
+    for (int i = 0; i < categorySubItems.size(); i++)
+    {
+        cout << "Checking category: " << i << endl;
+        cout << (category == (Categories)i ? "Category is the same" : "Category is different") << endl;
+        if (categorySubItems[(Categories)i].empty() || category == (Categories)i)
+        {
+            continue;
+        }
+        for (int j = 0; j < categorySubItems[(Categories)i].size(); j++)
+        {
+            categorySubItems[(Categories)i][j]->hide();
+        }
+    }
+
+    if (category == None)
+    {
+        return;
+    }
+
+    // reset active style
+    for (int i = 0; i < categoryBtns.size(); i++)
+    {
+        categoryBtns[(Categories)i]->setStyleSheet("QPushButton { color: #ffffff; }");
+    }
+    // set active style
+    categoryBtns[category]->setStyleSheet("QPushButton { color: #4FA270; }");
+
+    for (int i = 0; i < categorySubItems[category].size(); i++)
+    {
+        categorySubItems[category][i]->show();
+    }
+}
+
 void MainWindow::setupBtnFunctionalities()
 {
-    connect(ui->uploadBtnz, &QPushButton::clicked, this, &MainWindow::onUploadButtonClicked);
-    connect(ui->grayImageBtn, &QPushButton::clicked, this, &MainWindow::onConvertImage2GrayClicked);
-    connect(ui->showImageBtn, &QPushButton::clicked, this, &MainWindow::onShowImageButtonClicked);
-    connect(ui->translateImageBtn, &QPushButton::clicked, this, &MainWindow::onTranslateImageBtnClicked);
-    connect(ui->rotateImageBtn, &QPushButton::clicked, this, &MainWindow::onRotateImageBtnClicked);
-    connect(ui->skewImageBtn, &QPushButton::clicked, this, &MainWindow::onSkewImageBtnClicked);
-    connect(ui->flipImageBtn, &QPushButton::clicked, this, &MainWindow::onFlipImageBtnClicked);
-    connect(ui->zoomImageBtn, &QPushButton::clicked, this, &MainWindow::onZoomImageBtnClicked);
-    connect(ui->histogramBtn, &QPushButton::clicked, this, &MainWindow::onHistogramBtnClicked);
-    connect(ui->imageNegativeBtn, &QPushButton::clicked, this, &MainWindow::onImageNegativeBtnClicked);
-    connect(ui->logarithmicBtn, &QPushButton::clicked, this, &MainWindow::onLogarithmicTransformationBtnClicked);
-    connect(ui->powerTransformationBtn, &QPushButton::clicked, this, &MainWindow::onPowerTransformationBtnClicked);
-    connect(ui->bitPlaneSlicingBtn, &QPushButton::clicked, this, &MainWindow::onBitPlaneSlicingBtnClicked);
-    connect(ui->grayLevelSlicingBtn, &QPushButton::clicked, this, &MainWindow::onGrayLevelSlicingBtnClicked);
-    connect(ui->smoothingFiltersBtn, &QPushButton::clicked, this, &MainWindow::onSmoothingFiltersBtnClicked);
-
     connect(ui->uploadBtn, &QPushButton::clicked, this, &MainWindow::onUploadBtnClicked);
     connect(ui->saveBtn, &QPushButton::clicked, this, &MainWindow::onSaveBtnClicked);
     connect(ui->imagePropertiesBtn, &QPushButton::clicked, this, &MainWindow::onImagePropertiesBtnClicked);
@@ -640,10 +691,35 @@ void MainWindow::setupBtnFunctionalities()
     connect(ui->showDiffBtn, &QPushButton::pressed, this, &MainWindow::onShowDiffBtnPressed);
     connect(ui->showDiffBtn, &QPushButton::released, this, &MainWindow::onShowDiffBtnReleased);
     connect(ui->redoBtn, &QPushButton::clicked, this, &MainWindow::onRedoBtnClicked);
+
+    connect(ui->clarityBtn, &QPushButton::clicked, this, [this]()
+            { changeToolCategory(Clarity); });
+    connect(ui->adjustBtn, &QPushButton::clicked, this, [this]()
+            { changeToolCategory(Adjust); });
+    connect(ui->effectBtn, &QPushButton::clicked, this, [this]()
+            { changeToolCategory(Effect); });
+    connect(ui->detectionBtn, &QPushButton::clicked, this, [this]()
+            { changeToolCategory(Detection); });
+    connect(ui->uncategorizedBtn, &QPushButton::clicked, this, [this]()
+            { changeToolCategory(UnCategorized); });
+
+    categoryBtns[Clarity] = ui->clarityBtn;
+    categoryBtns[Adjust] = ui->adjustBtn;
+    categoryBtns[Effect] = ui->effectBtn;
+    categoryBtns[Detection] = ui->detectionBtn;
+    categoryBtns[UnCategorized] = ui->uncategorizedBtn;
+
+    categorySubItems[Clarity] = std::vector<QToolButton *>{ui->medianBtn, ui->smoothingBtn, ui->frequencyDomainBtn};
+    categorySubItems[Adjust] = std::vector<QToolButton *>{ui->translateBtn, ui->rotateBtn, ui->flipBtn, ui->zoomBtn, ui->deSkewImageBtn};
+    categorySubItems[Effect] = std::vector<QToolButton *>{ui->histogramEqBtn, ui->negativeBtn, ui->logTransformBtn, ui->cvtToGrayBtn, ui->areaOfInterestBtn};
+    categorySubItems[Detection] = std::vector<QToolButton *>{ui->sobelBtn, ui->segmentationBtn, ui->laplacianOfGaussianBtn, ui->bitSlicingBtn};
+    categorySubItems[UnCategorized] = std::vector<QToolButton *>{ui->brightnessAdjustBtn};
+    changeToolCategory(None);
 }
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow)
+    : QMainWindow(parent),
+      ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -658,6 +734,11 @@ MainWindow::~MainWindow()
 void MainWindow::onImageProcessingSubmit(bool shouldUpdateImages = true)
 {
     QImage qImage = matToQImage(image);
+    cout << "image type() " << image.type() << endl;
+    if (image.type() == CV_32FC1)
+    {
+        image.convertTo(image, CV_8UC1, 255.0);
+    }
 
     // Update the image gray on every image processing
     if (image.channels() != 1)
@@ -681,7 +762,7 @@ void MainWindow::onImageProcessingSubmit(bool shouldUpdateImages = true)
         images.push_back(image.clone());
         currentImageIndex = images.size() - 1;
     }
-
+    cout << "currentImageIndex " << currentImageIndex << endl;
     if (currentImageIndex == 0)
     {
         ui->undoBtn->setEnabled(false);
@@ -690,7 +771,7 @@ void MainWindow::onImageProcessingSubmit(bool shouldUpdateImages = true)
     else
     {
         ui->undoBtn->setEnabled(true);
-        ui->showDiffBtn->setEnabled(false);
+        ui->showDiffBtn->setEnabled(true);
     }
 
     if (currentImageIndex == images.size() - 1)
@@ -701,34 +782,10 @@ void MainWindow::onImageProcessingSubmit(bool shouldUpdateImages = true)
     {
         ui->redoBtn->setEnabled(true);
     }
-
-    if (images.size() >= 2)
-    {
-        ui->showDiffBtn->setEnabled(true);
-    }
-    else
-    {
-        ui->showDiffBtn->setEnabled(false);
-    }
 }
 
 void MainWindow::enableBtnsOnUpload()
 {
-    ui->grayImageBtn->setEnabled(true);
-    ui->showImageBtn->setEnabled(true);
-    ui->translateImageBtn->setEnabled(true);
-    ui->rotateImageBtn->setEnabled(true);
-    ui->skewImageBtn->setEnabled(true);
-    ui->flipImageBtn->setEnabled(true);
-    ui->zoomImageBtn->setEnabled(true);
-    ui->histogramBtn->setEnabled(true);
-    ui->imageNegativeBtn->setEnabled(true);
-    ui->logarithmicBtn->setEnabled(true);
-    ui->powerTransformationBtn->setEnabled(true);
-    ui->bitPlaneSlicingBtn->setEnabled(true);
-    ui->grayLevelSlicingBtn->setEnabled(true);
-    ui->smoothingFiltersBtn->setEnabled(true);
-
     ui->saveBtn->setEnabled(true);
     ui->imagePropertiesBtn->setEnabled(true);
 
@@ -763,19 +820,8 @@ void MainWindow::onUploadBtnClicked()
         {
             cvtColor(image, imageGrayed, COLOR_RGB2GRAY);
 
-            // TODO make this part a QMessageBox that shows when the user clicks a button to fetch the image data.
             auto [total, rows, cols, depth] = imageDetails(image);
             auto [min, max, avg] = imageMinMaxAvg(image);
-            ui->imageDescription->setText(QString::fromStdString(
-                "Path: " + fileName.toStdString() + "\n" +
-                "Dimensions (RowsXCols): " + to_string(rows) + "x" + to_string(cols) + "\n" +
-                "Total pixels: " + to_string(total) + "\n" +
-                "Depth code: " + to_string(depth) + "\n" +
-                "Minimum pixel value: " + to_string(min) + "\n" +
-                "Maximum pixel value: " + to_string(max) + "\n" +
-                "Dynamic range: (" + to_string(min) + ", " + to_string(max) + ")" + "\n" +
-                "Average pixel value: " + to_string(avg) + "\n" +
-                "Total number of bits required to store the image: " + to_string(imgSize(image))));
 
             MainWindow::enableBtnsOnUpload();
             if (images.empty())
@@ -789,8 +835,6 @@ void MainWindow::onUploadBtnClicked()
             }
             onImageProcessingSubmit(false);
             resetEdit();
-            MainWindow::setValidation();
-            MainWindow::initializeDataOnUpload();
         }
         else
         {
@@ -859,11 +903,16 @@ void MainWindow::onTranslateBtnClicked()
     image.copyTo(dstTranslatedImage);
 
     // Loop until the user input the termination input
-    // TODO make termination input for discard.
     while (!didEditFinish)
     {
         imshow(windowName, dstTranslatedImage);
-        waitKey(5);
+        int keyCode = waitKey(5);
+
+        if (keyCode == KeyCodes::ESC)
+        {
+            destroyWindow(windowName);
+            return;
+        }
     }
     destroyWindow(windowName);
     onImageProcessingSubmit();
@@ -880,7 +929,13 @@ void MainWindow::onRotateBtnClicked()
     while (!didEditFinish)
     {
         imshow(windowName, dstRotatedImage);
-        waitKey(5);
+        int keyCode = waitKey(5);
+
+        if (keyCode == KeyCodes::ESC)
+        {
+            destroyWindow(windowName);
+            return;
+        }
     }
     onImageProcessingSubmit();
 
@@ -901,16 +956,15 @@ void MainWindow::onFlipBtnClicked()
 
 void MainWindow::onBrightnessAdjustBtnClicked()
 {
-    // TODO implement brightness adjustment
     resetEdit();
     string windowName = "Adjust Brightness";
     namedWindow(windowName, WINDOW_AUTOSIZE);
 
-    imageGrayed.copyTo(dstBrightnessAdjustedImage);
-
-    BrightnessAdjustmentData userData;
+    TrackbarWindowData userData;
+    imageGrayed.copyTo(userData.dstImage);
     userData.image = imageGrayed.clone();
-    userData.dstBrightnessAdjustedImage = dstBrightnessAdjustedImage;
+    userData.windowName = windowName;
+    userData.mainWindow = this;
 
     createTrackbar("Brightness", windowName, NULL, 100, [](int value, void *userData)
                    {
@@ -919,9 +973,9 @@ void MainWindow::onBrightnessAdjustBtnClicked()
                    cout << "Gamma Value: " << gammaValue << endl;
 
                    // Access the image from userData
-                   BrightnessAdjustmentData *data = (BrightnessAdjustmentData *)userData;
+                   TrackbarWindowData *data = (TrackbarWindowData *)userData;
                    cv::Mat &image = data->image;
-                    cv::Mat &dstImage = data->dstBrightnessAdjustedImage;
+                    cv::Mat &dstImage = data->dstImage;
                     image.copyTo(dstImage);
 
                    int imageBits = imageDepth2Bits(dstImage.depth());
@@ -941,14 +995,23 @@ void MainWindow::onBrightnessAdjustBtnClicked()
                    normalize(dstImage, dstImage, 0, maxPixelValue, NORM_MINMAX);
                    convertScaleAbs(dstImage, dstImage);
 
-                   imshow("Adjust Brightness", dstImage); }, &userData);
+                   imshow(data->windowName, dstImage); }, &userData);
     setTrackbarPos("Brightness", windowName, 50);
     setTrackbarMin("Brightness", windowName, 1);
+    setMouseCallback(windowName, brightnessAdjustmentMouseHandler, &userData);
     imshow(windowName, imageGrayed);
-    waitKey(0);
-    userData.dstBrightnessAdjustedImage.copyTo(image);
-    onImageProcessingSubmit();
-    destroyWindow(windowName);
+waiting_key:
+    int keyCode = waitKey(0);
+
+    if (keyCode == KeyCodes::ESC)
+    {
+        destroyWindow(windowName);
+        return;
+    }
+    else
+    {
+        goto waiting_key;
+    }
 }
 
 void MainWindow::onHistogramEqBtnClicked()
@@ -1034,7 +1097,14 @@ void MainWindow::onZoomBtnClicked()
     while (!didEditFinish)
     {
         imshow(windowName, dstZoomedImage);
-        waitKey(5);
+        int keyCode = waitKey(5);
+
+        if (keyCode == KeyCodes::ESC)
+        {
+            images[currentImageIndex].copyTo(image);
+            destroyWindow(windowName);
+            return;
+        }
     }
     destroyWindow(windowName);
     dstZoomedImage.copyTo(image);
@@ -1056,7 +1126,22 @@ void MainWindow::onAreaOfInterestBtnClicked()
     while (!didEditFinish)
     {
         imshow(windowName, dstAreaOfInterestImage);
-        waitKey(5);
+        int keyCode = waitKey(5);
+
+        if (keyCode == KeyCodes::ESC)
+        {
+            images[currentImageIndex].copyTo(image);
+            if (image.channels() != 1)
+            {
+                cvtColor(image, imageGrayed, COLOR_RGB2GRAY);
+            }
+            else
+            {
+                image.copyTo(imageGrayed);
+            }
+            destroyWindow(windowName);
+            return;
+        }
     }
 
     destroyWindow(windowName);
@@ -1079,7 +1164,13 @@ void MainWindow::onDeSkewBtnClicked()
     while (!didEditFinish)
     {
         imshow(windowName, dstDeSkewedImage);
-        waitKey(5);
+        int keyCode = waitKey(5);
+
+        if (keyCode == KeyCodes::ESC)
+        {
+            destroyWindow(windowName);
+            return;
+        }
     }
 
     destroyWindow(windowName);
@@ -1098,10 +1189,10 @@ void MainWindow::onSmoothingBtnClicked()
     msgBox.setText("Select the smoothing filter you want to apply:");
     msgBox.setStandardButtons(QMessageBox::Close);
 
-    QPushButton *traditionalFilter = msgBox.addButton("Traditional Filter", QMessageBox::NoRole);
-    QPushButton *pyramidalFilter = msgBox.addButton("Pyramidal Filter", QMessageBox::NoRole);
-    QPushButton *circularFilter = msgBox.addButton("Circular Filter", QMessageBox::NoRole);
-    QPushButton *coneFilter = msgBox.addButton("Cone Filter", QMessageBox::NoRole);
+    QPushButton *traditionalFilter = msgBox.addButton("Traditional", QMessageBox::NoRole);
+    QPushButton *pyramidalFilter = msgBox.addButton("Pyramidal", QMessageBox::NoRole);
+    QPushButton *circularFilter = msgBox.addButton("Circular", QMessageBox::NoRole);
+    QPushButton *coneFilter = msgBox.addButton("Cone", QMessageBox::NoRole);
 
     msgBox.exec();
 
@@ -1137,7 +1228,22 @@ void MainWindow::onSmoothingBtnClicked()
     while (!didEditFinish)
     {
         imshow(windowName, dstSmoothedImage);
-        waitKey(5);
+        int keyCode = waitKey(5);
+
+        if (keyCode == KeyCodes::ESC)
+        {
+            images[currentImageIndex].copyTo(image);
+            if (image.channels() != 1)
+            {
+                cvtColor(image, imageGrayed, COLOR_RGB2GRAY);
+            }
+            else
+            {
+                image.copyTo(imageGrayed);
+            }
+            destroyWindow(windowName);
+            return;
+        }
     }
 
     destroyWindow(windowName);
@@ -1201,7 +1307,30 @@ void MainWindow::onSobelBtnClicked()
 
 void MainWindow::onFrequencyDomainBtnClicked()
 {
+    int isLowPassFilter = 0;
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Frequency Domain Filters");
+    msgBox.setText("Select the filter you want to apply:");
+    msgBox.setStandardButtons(QMessageBox::Close);
+    QPushButton *lowPassFilter = msgBox.addButton("Smoothen && Blurring", QMessageBox::NoRole);
+    QPushButton *highPassFilter = msgBox.addButton("Sharpen && Enhancing", QMessageBox::NoRole);
+    msgBox.exec();
+
+    if (msgBox.clickedButton() == lowPassFilter)
+    {
+        isLowPassFilter = 1;
+    }
+    else if (msgBox.clickedButton() == highPassFilter)
+    {
+        isLowPassFilter = 0;
+    }
+    else
+    {
+        return;
+    }
+
     d0 = 50;
+    resetEdit();
     string windowName = "To be determined";
     namedWindow(windowName, WINDOW_AUTOSIZE);
     imageGrayed.copyTo(dstFrequencyDomainImage);
@@ -1212,7 +1341,14 @@ void MainWindow::onFrequencyDomainBtnClicked()
     setTrackbarMax("d0", windowName, 255);
     setTrackbarMin("d0", windowName, 1);
 
-    while (1)
+    TrackbarWindowData userData;
+    userData.image = imageGrayed.clone();
+    userData.dstImage = dstFrequencyDomainImage;
+    userData.windowName = windowName;
+    userData.mainWindow = this;
+    setMouseCallback(windowName, frequencyDomainMouseHandler, &userData);
+
+    while (!didEditFinish)
     {
         Mat srcImage = imageGrayed.clone();
         int m = getOptimalDFTSize(srcImage.rows);
@@ -1256,10 +1392,10 @@ void MainWindow::onFrequencyDomainBtnClicked()
                 double z2 = j - filter.cols / 2;
                 if (sqrt(pow(z1, 2) + pow(z2, 2)) < d0)
                 {
-                    filter.at<float>(i, j) = 1;
+                    filter.at<float>(i, j) = isLowPassFilter ? 1 : 0;
                 }
                 else
-                    filter.at<float>(i, j) = 0;
+                    filter.at<float>(i, j) = isLowPassFilter ? 0 : 1;
             }
         }
 
@@ -1275,26 +1411,18 @@ void MainWindow::onFrequencyDomainBtnClicked()
         magnitude(planes[0], planes[1], dstFrequencyDomainImage);
         normalize(dstFrequencyDomainImage, dstFrequencyDomainImage, 0, 1, NORM_MINMAX);
         imshow(windowName, dstFrequencyDomainImage);
+        dstFrequencyDomainImage.copyTo(userData.dstImage);
 
     waiting_key:
         int keyCode = waitKey(0);
 
-        if (keyCode == 27)
+        if (keyCode == KeyCodes::ESC)
         {
             destroyWindow(windowName);
             break;
         }
 
-        if (keyCode == 32)
-        {
-            destroyWindow(windowName);
-            // convertScaleAbs(dstFrequencyDomainImage, dstFrequencyDomainImage);
-            dstFrequencyDomainImage.copyTo(image);
-            onImageProcessingSubmit();
-            break;
-        }
-
-        if (keyCode != 13 && keyCode != 32)
+        if (keyCode != KeyCodes::ENTER)
         {
             goto waiting_key;
         }
@@ -1303,7 +1431,8 @@ void MainWindow::onFrequencyDomainBtnClicked()
 
 void MainWindow::onSegmentationBtnClicked()
 {
-    int t0 = 0;
+    resetEdit();
+    int t0 = 80;
 
     QMessageBox msgBox;
     msgBox.setWindowTitle("Segmentation Method");
@@ -1350,53 +1479,52 @@ void MainWindow::onSegmentationBtnClicked()
         <ul>
             <li>Use the trackbar to adjust the threshold value (t0).</li>
             <li>Press ⏎ to proceed to the next attempt.</li>
-            <li>Press space to submit.</li>
+            <li>Right Click to submit.</li>
             <li>Press ␛ to exit.</li>
         </ul>
 
         <b>Note:</b> <span> You only have 10 attempts to the find suitable threshold value (t0).</span>
     )");
-        QCheckBox *checkBox = new QCheckBox("Do not show this message again");
-        instructionMsgBox.setCheckBox(checkBox);
+        // QCheckBox *checkBox = new QCheckBox("Do not show this message again");
+        // instructionMsgBox.setCheckBox(checkBox);
         instructionMsgBox.exec();
 
-        Mat dstImage = imageGrayed.clone();
-        // segmentation Thresholding, manually calculated T0
         string windowName = "Segmentation Thresholding, Manual T0";
         int attempts = 1;
-        while (attempts <= 10)
-        {
-            namedWindow(windowName);
-            createTrackbar("t0", windowName, &t0, 255);
 
+        TrackbarWindowData userData;
+        userData.image = imageGrayed.clone();
+        userData.dstImage = imageGrayed.clone();
+        userData.windowName = windowName;
+        userData.mainWindow = this;
+
+        namedWindow(windowName);
+        setMouseCallback(windowName, segmentationThresholdingMouseHandler, &userData);
+        createTrackbar("t0", windowName, &t0, 255);
+        imshow(windowName, imageGrayed);
+
+        // segmentation Thresholding, manually calculated T0
+        while (attempts <= 10 && !didEditFinish)
+        {
             for (int i = 0; i < imageGrayed.rows; i++)
             {
                 for (int j = 0; j < imageGrayed.cols; j++)
                 {
-                    dstImage.at<uchar>(i, j) = imageGrayed.at<uchar>(i, j) > t0 ? 255 : 0;
+                    userData.dstImage.at<uchar>(i, j) = imageGrayed.at<uchar>(i, j) > t0 ? 255 : 0;
                 }
             }
-            imshow(windowName, dstImage);
+            imshow(windowName, userData.dstImage);
 
         waiting_key:
-            int keyCode = waitKey(0);
-            cout << keyCode << endl;
+            int keyCode = pollKey();
 
-            if (keyCode == 27)
+            if (keyCode == KeyCodes::ESC)
             {
                 destroyWindow(windowName);
                 break;
             }
 
-            if (keyCode == 32)
-            {
-                destroyWindow(windowName);
-                dstImage.copyTo(image);
-                onImageProcessingSubmit();
-                break;
-            }
-
-            if (keyCode != 13 && keyCode != 32)
+            if (keyCode != KeyCodes::ENTER && !didEditFinish)
             {
                 goto waiting_key;
             }
@@ -1416,7 +1544,7 @@ void MainWindow::onSegmentationBtnClicked()
             if (msgBox.clickedButton() == submitBtn)
             {
                 destroyWindow(windowName);
-                dstImage.copyTo(image);
+                userData.dstImage.copyTo(image);
                 onImageProcessingSubmit();
             }
             else
@@ -1442,373 +1570,19 @@ void MainWindow::onRedoBtnClicked()
     onImageProcessingSubmit(false);
 }
 
-void MainWindow::onUndoBtnClicked()
-{
-    currentImageIndex--;
-    images.at(currentImageIndex).copyTo(image);
-    onImageProcessingSubmit(false);
-}
-
 void MainWindow::onShowDiffBtnPressed()
 {
-    ui->showDiffBtn->setText("Release to Show Previous");
     ui->currentImageContainer->setPixmap(QPixmap::fromImage(matToQImage(images.at(0))));
 }
 
 void MainWindow::onShowDiffBtnReleased()
 {
-    ui->showDiffBtn->setText("Show Original");
     ui->currentImageContainer->setPixmap(QPixmap::fromImage(matToQImage(images.at(currentImageIndex))));
 }
 
-void MainWindow::setValidation()
+void MainWindow::onUndoBtnClicked()
 {
-    QValidator *doubleInputsValidator = new QDoubleValidator(-99999, 99999, 3);
-    QValidator *inRangeValidator = new QIntValidator(0, pow(2, imageDepth2Bits(image.depth())) - 1);
-
-    // Translate validations
-    ui->txInput->setValidator(doubleInputsValidator);
-    ui->tyInput->setValidator(doubleInputsValidator);
-
-    // Rotate validations
-    ui->rotateX->setValidator(doubleInputsValidator);
-    ui->rotateY->setValidator(doubleInputsValidator);
-    ui->scale->setValidator(doubleInputsValidator);
-    ui->rotateAngle->setValidator(doubleInputsValidator);
-
-    // Zoom validations
-    ui->zoomXInput->setValidator(doubleInputsValidator);
-    ui->zoomYInput->setValidator(doubleInputsValidator);
-    ui->zoomTInput->setValidator(doubleInputsValidator);
-    ui->zoomSInput->setValidator(doubleInputsValidator);
-
-    // Gray Level Slicing
-    ui->grayLevelFromInput->setValidator(inRangeValidator);
-    ui->grayLevelToInput->setValidator(new QIntValidator(ui->grayLevelFromInput->text().toInt(), pow(2, imageDepth2Bits(image.depth())) - 1));
-}
-
-void MainWindow::initializeDataOnUpload()
-{
-    int rows = image.rows;
-    int cols = image.cols;
-
-    // set default rotate values
-    ui->rotateX->setText(QString::fromStdString(to_string(cols / 2)));
-    ui->rotateY->setText(QString::fromStdString(to_string(rows / 2)));
-    ui->rotateAngle->setText(QString::fromStdString(to_string(45)));
-    ui->scale->setText(QString::fromStdString(to_string(1)));
-
-    // set default skewing values
-    ui->skewXInput->setText(QString::fromStdString(to_string(0)));
-    ui->skewYInput->setText(QString::fromStdString(to_string(0)));
-    ui->skewXNewInput->setText(QString::fromStdString(to_string(0)));
-    ui->skewYNewInput->setText(QString::fromStdString(to_string(0)));
-    ui->skewXInput_2->setText(QString::fromStdString(to_string(cols - 1)));
-    ui->skewYInput_2->setText(QString::fromStdString(to_string(0)));
-    ui->skewXNewInput_2->setText(QString::fromStdString(to_string(cols - 1)));
-    ui->skewYNewInput_2->setText(QString::fromStdString(to_string(0)));
-    ui->skewYNewInput_3->setText(QString::fromStdString(to_string(rows - 1)));
-    ui->skewYInput_3->setText(QString::fromStdString(to_string(rows - 1)));
-
-    // set default zoom values
-    ui->zoomXInput->setText(QString::fromStdString(to_string(0)));
-    ui->zoomYInput->setText(QString::fromStdString(to_string(0)));
-    ui->zoomXMultiplier->setText(QString::fromStdString(to_string(2)));
-    ui->zoomYMultiplier->setText(QString::fromStdString(to_string(2)));
-}
-
-void MainWindow::onUploadButtonClicked()
-{
-    QString fileName = QFileDialog::getOpenFileName(this, "Open Image File", "", "Images (*.png *.xpm *.jpg *.jpeg *.bmp)");
-
-    if (!fileName.isEmpty())
-    {
-        image = imread(fileName.toStdString());
-        if (!image.empty())
-        {
-            cvtColor(image, imageGrayed, COLOR_RGB2GRAY);
-
-            auto [total, rows, cols, depth] = imageDetails(image);
-            auto [min, max, avg] = imageMinMaxAvg(image);
-            ui->imageDescription->setText(QString::fromStdString(
-                "Path: " + fileName.toStdString() + "\n" +
-                "Dimensions (RowsXCols): " + to_string(rows) + "x" + to_string(cols) + "\n" +
-                "Total pixels: " + to_string(total) + "\n" +
-                "Depth code: " + to_string(depth) + "\n" +
-                "Minimum pixel value: " + to_string(min) + "\n" +
-                "Maximum pixel value: " + to_string(max) + "\n" +
-                "Dynamic range: (" + to_string(min) + ", " + to_string(max) + ")" + "\n" +
-                "Average pixel value: " + to_string(avg) + "\n" +
-                "Total number of bits required to store the image: " + to_string(imgSize(image))));
-
-            MainWindow::enableBtnsOnUpload();
-            MainWindow::setValidation();
-            MainWindow::initializeDataOnUpload();
-        }
-        else
-        {
-            QMessageBox::warning(this, "Error", "Failed to load the image.");
-        }
-    }
-}
-
-void MainWindow::onShowImageButtonClicked()
-{
-    showImage("Original Image", image);
-}
-void MainWindow::onConvertImage2GrayClicked()
-{
-    Mat dstImage;
-    cvtColor(image, dstImage, COLOR_RGB2GRAY);
-    showImage("Grayed Image", dstImage);
-}
-
-void MainWindow::onTranslateImageBtnClicked()
-{
-    // get tx, ty values from inputs.
-    float txValue = ui->txInput->text().toFloat();
-    float tyValue = ui->tyInput->text().toFloat();
-    Mat translationMatrix = (Mat_<float>(2, 3) << 1, 0, txValue, 0, 1, tyValue), dstTranslationImg;
-    warpAffine(image, dstTranslationImg, translationMatrix, image.size());
-    showImage("Translation", dstTranslationImg);
-}
-
-void MainWindow::onRotateImageBtnClicked()
-{
-    QString rotateXText = ui->rotateX->text();
-    QString rotateYText = ui->rotateY->text();
-    QString rotateAngleText = ui->rotateAngle->text();
-    QString scaleText = ui->scale->text();
-    float rotateX = rotateXText.toFloat();
-    float rotateY = rotateYText.toFloat();
-    float rotateAngle = ui->rotateAngle->text().toDouble();
-    float scale = ui->scale->text().toDouble();
-
-    Mat dstRotationImage;
-    Mat rotationMatrix = getRotationMatrix2D(Point2f(rotateX, rotateY), rotateAngle, scale);
-    warpAffine(image, dstRotationImage, rotationMatrix, image.size());
-    showImage("Rotate", dstRotationImage);
-}
-
-void MainWindow::onSkewImageBtnClicked()
-{
-    float x1 = ui->skewXInput->text().toFloat();
-    float y1 = ui->skewYInput->text().toFloat();
-    float x2 = ui->skewXInput_2->text().toFloat();
-    float y2 = ui->skewYInput_2->text().toFloat();
-    float x3 = ui->skewXInput_3->text().toFloat();
-    float y3 = ui->skewYInput_3->text().toFloat();
-
-    float x1New = ui->skewXNewInput->text().toFloat();
-    float y1New = ui->skewYNewInput->text().toFloat();
-    float x2New = ui->skewXNewInput_2->text().toFloat();
-    float y2New = ui->skewYNewInput_2->text().toFloat();
-    float x3New = ui->skewXNewInput_3->text().toFloat();
-    float y3New = ui->skewYNewInput_3->text().toFloat();
-
-    Point2f srcPoints[3];
-    srcPoints[0] = Point2f(x1, y1);
-    srcPoints[1] = Point2f(x2, y2);
-    srcPoints[2] = Point2f(x3, y3);
-
-    Point2f dstPoints[3];
-    dstPoints[0] = Point2f(x1New, y1New);
-    dstPoints[1] = Point2f(x2New, y2New);
-    dstPoints[2] = Point2f(x3New, y3New);
-
-    Mat skewingMatrix = getAffineTransform(srcPoints, dstPoints);
-    Mat dstSkewingImage;
-    warpAffine(image, dstSkewingImage, skewingMatrix, image.size());
-    showImage("SKew", dstSkewingImage);
-}
-
-void MainWindow::onFlipImageBtnClicked()
-{
-    Mat flippedImage;
-    int flipCode = ui->flipCodeCombobox->currentText().toInt();
-    flip(image, flippedImage, flipCode);
-    string windowName;
-
-    switch (flipCode)
-    {
-    case 0:
-        windowName = "Flipping around X-axis";
-        break;
-
-    case 1:
-        windowName = "Flipping around Y-axis";
-        break;
-
-    case -1:
-        windowName = "Flipping around X-axis and Y-axis";
-        break;
-    }
-
-    showImage(windowName, flippedImage);
-}
-
-void MainWindow::onZoomImageBtnClicked()
-{
-    double x = ui->zoomXInput->text().toDouble();
-    double y = ui->zoomYInput->text().toDouble();
-    double t = ui->zoomTInput->text().toDouble();
-    double s = ui->zoomSInput->text().toDouble();
-    float xMultiplier = ui->zoomXMultiplier->text().toFloat();
-    float yMultiplier = ui->zoomYMultiplier->text().toFloat();
-    int fillingTechnique = ui->fillingTechniqueCombobox->currentText().toInt();
-
-    Mat dstImage;
-    Mat croppedImage = image(Rect(x, y, t, s));
-    cv::resize(croppedImage, dstImage, Size(), xMultiplier, yMultiplier, fillingTechnique);
-
-    string windowName = "Zoom";
-    windowName += fillingTechnique == 0 ? " (Nearest Neighbor)" : " (Bi-linear)";
-    showImage(windowName, dstImage);
-}
-
-void MainWindow::onHistogramBtnClicked()
-{
-    // TODO add diagram and show equalized gray level.
-    Mat dstImage;
-    equalizeHist(imageGrayed, dstImage);
-    showImage("Histogram equalized", dstImage);
-}
-
-void MainWindow::onImageNegativeBtnClicked()
-{
-    Mat dstImage = imageGrayed.clone();
-
-    for (int i = 0; i < dstImage.rows; i++)
-    {
-        for (int j = 0; j < dstImage.cols; j++)
-        {
-            int pixelValue = dstImage.at<uchar>(i, j);
-            int maxPixelValue = pow(2, imageDepth2Bits(dstImage.depth())) - 1;
-            dstImage.at<uchar>(i, j) = maxPixelValue - pixelValue;
-        }
-    }
-
-    showImage("Image Negative Transformation", dstImage);
-}
-
-void MainWindow::onLogarithmicTransformationBtnClicked()
-{
-    Mat dstImage = imageGrayed.clone();
-    int imageBits = imageDepth2Bits(dstImage.depth());
-    int maxPixelValue = pow(2, imageBits) - 1;
-
-    dstImage.convertTo(dstImage, CV_32F);
-
-    for (int i = 0; i < dstImage.rows; i++)
-    {
-        for (int j = 0; j < dstImage.cols; j++)
-        {
-            int pixelValue = dstImage.at<float>(i, j);
-            dstImage.at<float>(i, j) = log(pixelValue + 1);
-        }
-    }
-
-    normalize(dstImage, dstImage, 0, maxPixelValue, NORM_MINMAX);
-    convertScaleAbs(dstImage, dstImage);
-
-    showImage("Logarithmic Transformation", dstImage);
-}
-
-void MainWindow::onPowerTransformationBtnClicked()
-{
-    Mat dstImage = imageGrayed.clone();
-    float gammaValue = ui->gammaInput->text().toFloat();
-    int imageBits = imageDepth2Bits(dstImage.depth());
-    int maxPixelValue = pow(2, imageBits) - 1;
-
-    dstImage.convertTo(dstImage, CV_32F);
-
-    for (int i = 0; i < dstImage.rows; i++)
-    {
-        for (int j = 0; j < dstImage.cols; j++)
-        {
-            float pixelValue = dstImage.at<float>(i, j);
-            dstImage.at<float>(i, j) = pow(pixelValue, gammaValue);
-        }
-    }
-
-    normalize(dstImage, dstImage, 0, maxPixelValue, NORM_MINMAX);
-    convertScaleAbs(dstImage, dstImage);
-    showImage("Power Law Transformation", dstImage);
-}
-
-void MainWindow::onBitPlaneSlicingBtnClicked()
-{
-    Mat dstImage = imageGrayed.clone();
-    int maxPixelValue = pow(2, imageDepth2Bits(dstImage.depth()));
-    int msbValue = maxPixelValue / 2;
-
-    for (int i = 0; i < dstImage.rows; i++)
-    {
-        for (int j = 0; j < dstImage.cols; j++)
-        {
-            int pixelValue = dstImage.at<uchar>(i, j);
-            dstImage.at<uchar>(i, j) = pixelValue & msbValue ? 255 : 0;
-        }
-    }
-
-    showImage("Bit plane slicing", dstImage);
-}
-
-void MainWindow::onGrayLevelSlicingBtnClicked()
-{
-    Mat dstImage = imageGrayed.clone();
-    int fromValue = ui->grayLevelFromInput->text().toInt();
-    int toValue = ui->grayLevelFromInput->text().toInt();
-    QString constantInput = ui->grayLevelOtherwiseInput->text();
-    // TODO display pixelValues in image as value => frequency
-
-    for (int i = 0; i < dstImage.rows; i++)
-    {
-        for (int j = 0; j < dstImage.cols; j++)
-        {
-            int pixelValue = dstImage.at<uchar>(i, j);
-            if (pixelValue >= fromValue && pixelValue <= toValue)
-                dstImage.at<uchar>(i, j) = 255;
-            else
-                dstImage.at<uchar>(i, j) = (!constantInput.isEmpty() ? constantInput.toInt() : pixelValue);
-        }
-    }
-
-    showImage("Gray Level Slicing", dstImage);
-}
-
-void MainWindow::onSmoothingFiltersBtnClicked()
-{
-    Mat dstImage, kernel;
-    string kernelOption = ui->kernelSelectInput->currentText().toStdString();
-    QDebug deb = qDebug();
-    deb << "Selected Kernel Option" << kernelOption;
-
-    if (kernelOption == "traditionalKernel3x3")
-    {
-        kernel = traditionalKernel3x3;
-    }
-    else if (kernelOption == "pyramidalKernel5x5")
-    {
-        kernel = pyramidalKernel5x5;
-    }
-    else if (kernelOption == "circularKernel5x5")
-    {
-        kernel = circularKernel5x5;
-    }
-    else if (kernelOption == "coneKernel5x5")
-    {
-        kernel = coneKernel5x5;
-    }
-    else
-    {
-        QMessageBox::warning(this, "Error", "Please select smoothing filters select");
-        return;
-    }
-
-    logMat(kernel);
-
-    filter2D(image, dstImage, CV_8UC1, kernel);
-    showImage(kernelOption, dstImage);
+    currentImageIndex--;
+    images.at(currentImageIndex).copyTo(image);
+    onImageProcessingSubmit(false);
 }

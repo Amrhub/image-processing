@@ -4,8 +4,17 @@
 #include <QMainWindow>
 #include <opencv2/opencv.hpp>
 
-QT_BEGIN_NAMESPACE
-namespace Ui
+enum Categories
+{
+    Clarity,
+    Adjust,
+    Effect,
+    Detection,
+    UnCategorized,
+    None
+};
+
+QT_BEGIN_NAMESPACE namespace Ui
 {
     class MainWindow;
 }
@@ -21,30 +30,12 @@ public:
 
     void setupBtnFunctionalities();
     void enableBtnsOnUpload();
-    void initializeDataOnUpload();
-    void setValidation();
     void onImageProcessingSubmit(bool shouldUpdateImages);
+    void changeToolCategory(Categories category);
 
     // Popup options
     int showFlipPopup();
 
-    void onUploadButtonClicked();
-    void onShowImageButtonClicked();
-    void onConvertImage2GrayClicked();
-    void onTranslateImageBtnClicked();
-    void onRotateImageBtnClicked();
-    void onSkewImageBtnClicked();
-    void onFlipImageBtnClicked();
-    void onZoomImageBtnClicked();
-    void onHistogramBtnClicked();
-    void onImageNegativeBtnClicked();
-    void onLogarithmicTransformationBtnClicked();
-    void onPowerTransformationBtnClicked();
-    void onBitPlaneSlicingBtnClicked();
-    void onGrayLevelSlicingBtnClicked();
-    void onSmoothingFiltersBtnClicked();
-
-    // New integration
     void onCvtGrayBtnClicked();
     void onTranslateBtnClicked();
     void onRotateBtnClicked();

@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/add-photo.svg</file>
+        <file>icons/save-photo.svg</file>
+        <file>icons/undo.svg</file>
+        <file>icons/redo.svg</file>
+        <file>icons/compare.svg</file>
+        <file>icons/move.svg</file>
+        <file>icons/smooth.svg</file>
+        <file>icons/smoothen_sharpen.svg</file>
+        <file>icons/water_drop.svg</file>
+        <file>icons/rotate.svg</file>
+        <file>icons/flip.svg</file>
+        <file>icons/brightness.svg</file>
+        <file>icons/zoom.svg</file>
+        <file>icons/skew.svg</file>
+        <file>icons/negative.svg</file>
+        <file>icons/log_transformation.svg</file>
+        <file>icons/gray.svg</file>
+        <file>icons/interest.svg</file>
+        <file>icons/magic.svg</file>
+        <file>icons/edge_1.svg</file>
+        <file>icons/edge_2.svg</file>
+        <file>icons/object_1.svg</file>
+        <file>icons/object_2.svg</file>
+        <file>icons/properties.svg</file>
+    </qresource>
+</RCC>

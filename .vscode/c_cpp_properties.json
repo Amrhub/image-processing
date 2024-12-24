@@ -10,7 +10,10 @@
         "/opt/homebrew/Cellar/qt/6.7.2_1/include/**"
       ],
       "defines": [],
-      "macFrameworkPath": ["/System/Library/Frameworks", "/Library/Frameworks"],
+      "macFrameworkPath": [
+        "/System/Library/Frameworks",
+        "/Library/Frameworks"
+      ],
       "compilerPath": "/usr/local/Caskroom/miniconda/base/bin/clang",
       "cStandard": "c17",
       "cppStandard": "c++14",
