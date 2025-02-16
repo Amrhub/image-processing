@@ -486,34 +486,6 @@ int imageDepth2Bits(int depth)
     }
 }
 
-// Limit 5 rows and 5 cols for brevity
-void logMat(const cv::Mat &mat)
-{
-    QString output;
-    output += QString("cv::Mat [rows=%1, cols=%2]\n")
-                  .arg(mat.rows)
-                  .arg(mat.cols);
-
-    if (!mat.empty())
-    {
-        output += "Data:\n";
-        for (int i = 0; i < std::min(5, mat.rows); ++i)
-        {
-            for (int j = 0; j < std::min(5, mat.cols); ++j)
-            {
-                output += QString::number(mat.at<float>(i, j)) + " ";
-            }
-            output += "\n";
-        }
-    }
-    else
-    {
-        output += "(empty)";
-    }
-
-    qInfo().noquote() << output; // Use .noquote() to prevent escaping
-}
-
 tuple<int, int, int, int> imageDetails(Mat img)
 {
     return make_tuple((int)img.total(), (int)img.rows, (int)img.cols, (int)img.depth());
@@ -688,6 +660,7 @@ void MainWindow::setupBtnFunctionalities()
     connect(ui->laplacianOfGaussianBtn, &QPushButton::clicked, this, &MainWindow::onLaplacianOfGaussianBtnClicked);
 
     connect(ui->undoBtn, &QPushButton::clicked, this, &MainWindow::onUndoBtnClicked);
+    connect(ui->resetBtn, &QPushButton::clicked, this, &MainWindow::onResetBtnClicked);
     connect(ui->showDiffBtn, &QPushButton::pressed, this, &MainWindow::onShowDiffBtnPressed);
     connect(ui->showDiffBtn, &QPushButton::released, this, &MainWindow::onShowDiffBtnReleased);
     connect(ui->redoBtn, &QPushButton::clicked, this, &MainWindow::onRedoBtnClicked);
@@ -782,6 +755,15 @@ void MainWindow::onImageProcessingSubmit(bool shouldUpdateImages = true)
     {
         ui->redoBtn->setEnabled(true);
     }
+
+    if (images.size() == 1)
+    {
+        ui->resetBtn->setEnabled(false);
+    }
+    else
+    {
+        ui->resetBtn->setEnabled(true);
+    }
 }
 
 void MainWindow::enableBtnsOnUpload()
@@ -818,11 +800,6 @@ void MainWindow::onUploadBtnClicked()
         image = imread(fileName.toStdString());
         if (!image.empty())
         {
-            cvtColor(image, imageGrayed, COLOR_RGB2GRAY);
-
-            auto [total, rows, cols, depth] = imageDetails(image);
-            auto [min, max, avg] = imageMinMaxAvg(image);
-
             MainWindow::enableBtnsOnUpload();
             if (images.empty())
             {
@@ -1584,5 +1561,14 @@ void MainWindow::onUndoBtnClicked()
 {
     currentImageIndex--;
     images.at(currentImageIndex).copyTo(image);
+    onImageProcessingSubmit(false);
+}
+
+void MainWindow::onResetBtnClicked()
+{
+    resetEdit();
+    currentImageIndex = 0;
+    images.at(0).copyTo(image);
+    images.erase(images.begin() + 1, images.end());
     onImageProcessingSubmit(false);
 }

@@ -60,6 +60,7 @@ public:
     void onImagePropertiesBtnClicked();
 
     void onUndoBtnClicked();
+    void onResetBtnClicked();
     void onShowDiffBtnPressed();
     void onShowDiffBtnReleased();
     void onRedoBtnClicked();

@@ -3,7 +3,7 @@
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="windowModality">
-   <enum>Qt::WindowModality::ApplicationModal</enum>
+   <enum>Qt::WindowModality::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -133,7 +133,18 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: #2e2f30;</string>
+   <string notr="true">QPushButton {
+background-color: #2e2f30;
+}
+
+ QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+    }</string>
   </property>
   <property name="iconSize">
    <size>
@@ -195,13 +206,24 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Download the image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius: 15px;
+     <string notr="true">QPushButton {
+border-radius: 15px;
 background-color:  #3AC279;
 color: white;
 text-transform: uppercase;
 font-weight: 600;
 font-size: 16px;
-border: none;</string>
+border: none;
+}
+
+ QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+    }</string>
     </property>
     <property name="text">
      <string>Save</string>
@@ -223,7 +245,8 @@ border: none;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border: none;</string>
+     <string notr="true">border: none;
+background-color: transparent;</string>
     </property>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
@@ -272,7 +295,14 @@ border: none;</string>
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Adjust position&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="styleSheet">
-           <string notr="true"/>
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+    }</string>
           </property>
           <property name="text">
            <string>Nudge</string>
@@ -306,6 +336,16 @@ border: none;</string>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rotate image&lt;/p&gt;&lt;p&gt;Use scroll up/down to zoom in/out&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+    }</string>
+          </property>
           <property name="text">
            <string>Rotate</string>
           </property>
@@ -334,6 +374,16 @@ border: none;</string>
           </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flip&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+    }</string>
           </property>
           <property name="text">
            <string>Flip</string>
@@ -364,6 +414,16 @@ border: none;</string>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Adjust brightness&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+    }</string>
+          </property>
           <property name="text">
            <string>Brightness</string>
           </property>
@@ -392,6 +452,16 @@ border: none;</string>
           </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Simple way to improve dark or washed-out images&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+    }</string>
           </property>
           <property name="text">
            <string>Enhance</string>
@@ -422,6 +492,16 @@ border: none;</string>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Invert colors&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+    }</string>
+          </property>
           <property name="text">
            <string>Invert</string>
           </property>
@@ -450,6 +530,16 @@ border: none;</string>
           </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Smoothen manually selected area&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+    }</string>
           </property>
           <property name="text">
            <string>Purify</string>
@@ -480,6 +570,16 @@ border: none;</string>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Smoothen the entire image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+    }</string>
+          </property>
           <property name="text">
            <string>Smoothen</string>
           </property>
@@ -508,6 +608,16 @@ border: none;</string>
           </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zoom&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+    }</string>
           </property>
           <property name="text">
            <string>Zoom</string>
@@ -538,6 +648,17 @@ border: none;</string>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enhancing image details in darker regions while compressing lighter areas&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
+          </property>
           <property name="text">
            <string>Enhancing details</string>
           </property>
@@ -566,6 +687,17 @@ border: none;</string>
           </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Convert image to grayscale&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
           </property>
           <property name="text">
            <string>Grayscale</string>
@@ -596,6 +728,17 @@ border: none;</string>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Highlight gray range of interest selected even if outside boundaries&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
+          </property>
           <property name="text">
            <string>Area of interest</string>
           </property>
@@ -624,6 +767,17 @@ border: none;</string>
           </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select 3 points that have problem&lt;br/&gt;Seelct 3 points where it should be corrected&lt;br/&gt;&lt;br/&gt;NOTE: Order of choice matters&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
           </property>
           <property name="text">
            <string>Straighten</string>
@@ -654,6 +808,17 @@ border: none;</string>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Can detect horizontal, vertical, or both edges in the image&lt;br/&gt;It is senstive to noise make sure to smooth the image before&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
+          </property>
           <property name="text">
            <string>Edge 1</string>
           </property>
@@ -682,6 +847,17 @@ border: none;</string>
           </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Smoothen or Sharpen the image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
           </property>
           <property name="text">
            <string>Mix</string>
@@ -712,6 +888,17 @@ border: none;</string>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;dividing image into a set of regions with similar characterisitics that represent image objects&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
+          </property>
           <property name="text">
            <string>Object 1</string>
           </property>
@@ -741,6 +928,17 @@ border: none;</string>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Detects edges not prone to noise&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
+          </property>
           <property name="text">
            <string>Edge 2</string>
           </property>
@@ -769,6 +967,17 @@ border: none;</string>
           </property>
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converting a gray-level to a binary image.&lt;/p&gt;&lt;p&gt;Image compression&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
           </property>
           <property name="text">
            <string>Object 2</string>
@@ -803,7 +1012,9 @@ border: none;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border: none;</string>
+     <string notr="true">border: none;
+background-color: transparent
+</string>
     </property>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
@@ -945,9 +1156,20 @@ border: none;</string>
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Undo&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="styleSheet">
-        <string notr="true">border-radius: 6px;
+        <string notr="true">QPushButton {
 background-color: transparent;
-</string>
+border: none;
+}
+
+QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
        </property>
        <property name="text">
         <string/>
@@ -982,9 +1204,20 @@ background-color: transparent;
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Redo&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="styleSheet">
-        <string notr="true">border-radius: 6px;
+        <string notr="true">QPushButton {
 background-color: transparent;
-</string>
+border: none;
+}
+
+QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
        </property>
        <property name="text">
         <string/>
@@ -1022,8 +1255,20 @@ background-color: transparent;
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Undo&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: transparent;
-</string>
+     <string notr="true">QPushButton {
+background-color: transparent;
+border: none;
+}
+
+QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
     </property>
     <property name="text">
      <string/>
@@ -1042,10 +1287,10 @@ background-color: transparent;
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>90</y>
       <width>54</width>
-      <height>123</height>
+      <height>113</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -1072,8 +1317,20 @@ background-color: transparent;
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Upload Image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="styleSheet">
-        <string notr="true">border-radius: 6px;
-background-color: transparent;</string>
+        <string notr="true">QPushButton {
+background-color: transparent;
+border: none;
+}
+
+QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
        </property>
        <property name="text">
         <string/>
@@ -1091,26 +1348,44 @@ background-color: transparent;</string>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="imagePropertiesBtn">
+      <widget class="QPushButton" name="resetBtn">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Download the image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reset to Original&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: transparent;
-border: none;</string>
+        <string notr="true">QPushButton {
+border-radius: 6px;
+background-color: transparent;
+}
+
+QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="icon">
         <iconset resource="icons.qrc">
-         <normaloff>:/icons/properties.svg</normaloff>:/icons/properties.svg</iconset>
+         <normaloff>:/icons/reset.svg</normaloff>:/icons/reset.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -1121,6 +1396,54 @@ border: none;</string>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="imagePropertiesBtn">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>220</y>
+      <width>52</width>
+      <height>48</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Download the image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+background-color: transparent;
+border: none;
+}
+
+QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icons.qrc">
+      <normaloff>:/icons/properties.svg</normaloff>:/icons/properties.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>48</width>
+      <height>48</height>
+     </size>
+    </property>
    </widget>
   </widget>
  </widget>
