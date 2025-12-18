@@ -27,6 +27,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(image-processing
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        images.qrc
+        images.qrc
+        images.qrc
+        icons.qrc
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET image-processing APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -47,13 +51,19 @@ else()
 endif()
 
 target_link_libraries(image-processing PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${OpenCV_LIBS})
+target_sources(${PROJECT_NAME} 
+    PRIVATE
+        clickable_label.cpp
+        clickable_label.h
+        # ... other existing source files
+)
 # target_link_libraries(image-processing )
 
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
+# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.9.3.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
+if(${QT_VERSION} VERSION_LESS 6.9.3)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.image-processing)
 endif()
 set_target_properties(image-processing PROPERTIES
