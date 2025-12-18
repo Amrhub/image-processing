@@ -60,10 +60,10 @@ target_sources(${PROJECT_NAME}
 # target_link_libraries(image-processing )
 
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
+# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.9.3.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
+if(${QT_VERSION} VERSION_LESS 6.9.3)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.image-processing)
 endif()
 set_target_properties(image-processing PROPERTIES

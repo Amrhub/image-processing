@@ -133,7 +133,11 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">QPushButton {
+   <string notr="true">* {
+font-size: 16px;
+}
+
+QPushButton {
 background-color: #2e2f30;
 }
 
@@ -238,10 +242,10 @@ border: none;
    <widget class="QScrollArea" name="scrollArea">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>80</x>
       <y>680</y>
-      <width>411</width>
-      <height>81</height>
+      <width>441</width>
+      <height>101</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -262,8 +266,8 @@ background-color: transparent;</string>
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>1366</width>
-       <height>93</height>
+       <width>1640</width>
+       <height>101</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
@@ -282,6 +286,7 @@ background-color: transparent;</string>
           </property>
           <property name="font">
            <font>
+            <pointsize>-1</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -878,46 +883,6 @@ background-color: transparent;</string>
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="segmentationBtn">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="cursor">
-           <cursorShape>PointingHandCursor</cursorShape>
-          </property>
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;dividing image into a set of regions with similar characterisitics that represent image objects&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"> QToolTip {
-        background-color: #2A2A2A;
-        color: white;
-        border: 1px solid #3A3A3A;
-        border-radius: 4px;
-        padding: 4px;
-        font: 12px;
-        
-    }</string>
-          </property>
-          <property name="text">
-           <string>Object 1</string>
-          </property>
-          <property name="icon">
-           <iconset resource="icons.qrc">
-            <normaloff>:/icons/object_2.svg</normaloff>:/icons/object_2.svg</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>48</width>
-            <height>48</height>
-           </size>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QToolButton" name="laplacianOfGaussianBtn">
           <property name="enabled">
            <bool>false</bool>
@@ -958,6 +923,46 @@ background-color: transparent;</string>
          </widget>
         </item>
         <item>
+         <widget class="QToolButton" name="segmentationBtn">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;dividing image into a set of regions with similar characterisitics that represent image objects&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"> QToolTip {
+        background-color: #2A2A2A;
+        color: white;
+        border: 1px solid #3A3A3A;
+        border-radius: 4px;
+        padding: 4px;
+        font: 12px;
+        
+    }</string>
+          </property>
+          <property name="text">
+           <string>Object</string>
+          </property>
+          <property name="icon">
+           <iconset resource="icons.qrc">
+            <normaloff>:/icons/object_1.svg</normaloff>:/icons/object_1.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>48</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonStyle::ToolButtonTextUnderIcon</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QToolButton" name="bitSlicingBtn">
           <property name="enabled">
            <bool>false</bool>
@@ -980,11 +985,11 @@ background-color: transparent;</string>
     }</string>
           </property>
           <property name="text">
-           <string>Object 2</string>
+           <string>Compression</string>
           </property>
           <property name="icon">
            <iconset resource="icons.qrc">
-            <normaloff>:/icons/object_1.svg</normaloff>:/icons/object_1.svg</iconset>
+            <normaloff>:/icons/compress.svg</normaloff>:/icons/compress.svg</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -1056,7 +1061,7 @@ background-color: transparent
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string notr="true"/>
          </property>
          <property name="text">
           <string>Clarity</string>
@@ -1072,7 +1077,7 @@ background-color: transparent
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string/>
          </property>
          <property name="text">
           <string>Adjust</string>
@@ -1088,7 +1093,7 @@ background-color: transparent
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string/>
          </property>
          <property name="text">
           <string>Effect</string>
@@ -1104,7 +1109,7 @@ background-color: transparent
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string/>
          </property>
          <property name="text">
           <string>Detection</string>
@@ -1120,10 +1125,10 @@ background-color: transparent
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string/>
          </property>
          <property name="text">
-          <string>Brightness</string>
+          <string>Transform</string>
          </property>
         </widget>
        </item>
@@ -1307,6 +1312,7 @@ QToolTip {
        </property>
        <property name="font">
         <font>
+         <pointsize>-1</pointsize>
          <bold>false</bold>
         </font>
        </property>
@@ -1413,7 +1419,7 @@ QToolTip {
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Download the image&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show the image properties&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {

@@ -597,17 +597,35 @@ int MainWindow::showFlipPopup()
     return -2;
 }
 
+string getCategoryName(Categories category)
+{
+    switch (category)
+    {
+    case Clarity:
+        return "Clarity";
+    case Adjust:
+        return "Adjust";
+    case Effect:
+        return "Effect";
+    case Detection:
+        return "Detection";
+    case UnCategorized:
+        return "UnCategorized";
+    default:
+        return "None";
+    }
+}
+
 void MainWindow::changeToolCategory(Categories category)
 {
     // Hide all QToolButtons or QPushButtons in the subItemsScrollArea except the one at the index of the current category
     for (int i = 0; i < categorySubItems.size(); i++)
     {
-        cout << "Checking category: " << i << endl;
-        cout << (category == (Categories)i ? "Category is the same" : "Category is different") << endl;
         if (categorySubItems[(Categories)i].empty() || category == (Categories)i)
         {
             continue;
         }
+
         for (int j = 0; j < categorySubItems[(Categories)i].size(); j++)
         {
             categorySubItems[(Categories)i][j]->hide();
@@ -624,11 +642,13 @@ void MainWindow::changeToolCategory(Categories category)
     {
         categoryBtns[(Categories)i]->setStyleSheet("QPushButton { color: #ffffff; }");
     }
+
     // set active style
     categoryBtns[category]->setStyleSheet("QPushButton { color: #4FA270; }");
 
     for (int i = 0; i < categorySubItems[category].size(); i++)
     {
+        cout << "Show sub items for " << getCategoryName(category) << "::" << categorySubItems[category][i]->text().toStdString() << endl;
         categorySubItems[category][i]->show();
     }
 }
@@ -685,9 +705,10 @@ void MainWindow::setupBtnFunctionalities()
     categorySubItems[Clarity] = std::vector<QToolButton *>{ui->medianBtn, ui->smoothingBtn, ui->frequencyDomainBtn};
     categorySubItems[Adjust] = std::vector<QToolButton *>{ui->translateBtn, ui->rotateBtn, ui->flipBtn, ui->zoomBtn, ui->deSkewImageBtn};
     categorySubItems[Effect] = std::vector<QToolButton *>{ui->histogramEqBtn, ui->negativeBtn, ui->logTransformBtn, ui->cvtToGrayBtn, ui->areaOfInterestBtn};
-    categorySubItems[Detection] = std::vector<QToolButton *>{ui->sobelBtn, ui->segmentationBtn, ui->laplacianOfGaussianBtn, ui->bitSlicingBtn};
-    categorySubItems[UnCategorized] = std::vector<QToolButton *>{ui->brightnessAdjustBtn};
-    changeToolCategory(None);
+    categorySubItems[Detection] = std::vector<QToolButton *>{ui->sobelBtn, ui->segmentationBtn, ui->laplacianOfGaussianBtn};
+    categorySubItems[UnCategorized] = std::vector<QToolButton *>{ui->brightnessAdjustBtn, ui->bitSlicingBtn};
+
+    changeToolCategory(Categories::Clarity);
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -1166,10 +1187,10 @@ void MainWindow::onSmoothingBtnClicked()
     msgBox.setText("Select the smoothing filter you want to apply:");
     msgBox.setStandardButtons(QMessageBox::Close);
 
-    QPushButton *traditionalFilter = msgBox.addButton("Traditional", QMessageBox::NoRole);
-    QPushButton *pyramidalFilter = msgBox.addButton("Pyramidal", QMessageBox::NoRole);
-    QPushButton *circularFilter = msgBox.addButton("Circular", QMessageBox::NoRole);
-    QPushButton *coneFilter = msgBox.addButton("Cone", QMessageBox::NoRole);
+    QPushButton *traditionalFilter = msgBox.addButton("Level 1", QMessageBox::NoRole);
+    QPushButton *pyramidalFilter = msgBox.addButton("Level 2", QMessageBox::NoRole);
+    QPushButton *circularFilter = msgBox.addButton("Level 3", QMessageBox::NoRole);
+    QPushButton *coneFilter = msgBox.addButton("Level 4", QMessageBox::NoRole);
 
     msgBox.exec();
 

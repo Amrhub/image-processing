@@ -23,7 +23,7 @@
         <file>icons/edge_1.svg</file>
         <file>icons/edge_2.svg</file>
         <file>icons/object_1.svg</file>
-        <file>icons/object_2.svg</file>
+        <file>icons/compress.svg</file>
         <file>icons/properties.svg</file>
     </qresource>
 </RCC>
